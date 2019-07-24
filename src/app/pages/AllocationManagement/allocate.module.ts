@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import {ViewAllocationComponent} from './ShowAllocation/view-allocation.component';
 import { AllocateItemComponent } from './AllocateItem/allocate-item.component';
 import {DataTablesModule} from 'angular-datatables';
-import { NbIconModule } from '@nebular/theme';
+import { NbIconModule, NbInputModule, NbRadioModule, NbSelectModule, NbCheckboxModule, NbButtonModule, NbCardModule, NbAlertModule } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 
 @NgModule({
@@ -13,7 +13,14 @@ import { NbEvaIconsModule } from '@nebular/eva-icons';
       DataTablesModule,
       FormsModule,
       NbIconModule,
-      NbEvaIconsModule
+      NbEvaIconsModule,
+      NbInputModule,
+      NbRadioModule,
+      NbSelectModule,
+      NbCheckboxModule,
+      NbButtonModule,
+      NbCardModule,
+      NbAlertModule
     ],
     declarations: [
       ViewAllocationComponent,

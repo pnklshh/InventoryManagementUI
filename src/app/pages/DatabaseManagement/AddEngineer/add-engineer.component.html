@@ -13,43 +13,51 @@
 </div>
 
 <body>
-    <form #addengineerform=ngForm class="form-horizontal">
-        <div class="alertWrapper">
-            <div *ngIf="errorAlert" class="alert alert-danger">
-                <p>
-                    {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
-                </p>
-            </div>
-            <div *ngIf="successAlert" class="alert alert-success">
-                <p>
-                    {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
-                </p>
-            </div>
-        </div>
-        <div class="mandate-notify">
-            <sup>*</sup>&nbsp;Mandatory fields
-        </div>
-    
-        <div class="form-group row">
-            <label for="engineerName" class="col-sm-3 form-control-label">Engineer name<sup>*</sup></label>
-            <div class="col-sm-6">
-                <input type="text" id="engineerName" class="form-control-sm" name="engineerName" #engineerName=ngModel [(ngModel)]="engineer.EngineerName" required>
-                <div *ngIf="engineerName.invalid && (engineerName.dirty || engineerName.touched)" class="validate">
-                    <div *ngIf="engineerName.errors.required">
-                        Engineer name is required.
+    <nb-card>
+        <nb-card-body>
+            <form #addengineerform=ngForm>
+                <div class="alertWrapper">
+                    <div *ngIf="errorAlert">
+                        <nb-alert class="alert-center" status="danger">
+                            <p>
+                                {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                            </p>
+                        </nb-alert>
+                    </div>
+                    <div *ngIf="successAlert">
+                        <nb-alert class="alert-center" status="success">
+                            <p>
+                                {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                            </p>
+                        </nb-alert>
                     </div>
                 </div>
-            </div>
-        </div>
-        
-        <div class="form-group row offset-sm-4">
-            <div *ngIf="isAddPage">
-                <button type="submit" class="btn btn-primary" (click)="addEngineer()" [disabled]="addengineerform.invalid">Add</button>
-            </div>
-            <div *ngIf="!isAddPage">
-                <button type="submit" class="btn btn-primary" (click)="addEngineer()" [disabled]="addengineerform.invalid">Update</button>
-            </div>
-        </div>
-    </form>
+                <div class="mandate-notify">
+                    <sup>*</sup>&nbsp;Mandatory fields
+                </div>
+            
+                <div class="form-group row">
+                    <label for="engineerName" class="label col-sm-3 col-form-label">Engineer name<sup>*</sup></label>
+                    <div class="col-sm-6">
+                        <input type="text" id="engineerName" nbInput fullWidth placeholder="Engineer name" name="engineerName" #engineerName=ngModel [(ngModel)]="engineer.EngineerName" required>
+                        <div *ngIf="engineerName.invalid && (engineerName.dirty || engineerName.touched)" class="validate">
+                            <div *ngIf="engineerName.errors.required">
+                                Engineer name is required.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group row offset-sm-3">
+                    <div *ngIf="isAddPage">
+                        <button type="submit" nbButton status="primary" (click)="addEngineer()" [disabled]="addengineerform.invalid">Add</button>
+                    </div>
+                    <div *ngIf="!isAddPage">
+                        <button type="submit" nbButton status="primary" (click)="addEngineer()" [disabled]="addengineerform.invalid">Update</button>
+                    </div>
+                </div>
+            </form>
+        </nb-card-body>
+    </nb-card>
 </body>
 </html>

@@ -15,7 +15,7 @@
 <body>    
     <nb-card>
         <nb-card-body>
-            <form #addcityform=ngForm class="form-horizontal">
+            <form #addcityform=ngForm>
                 <div class="alertWrapper">
                     <div *ngIf="errorAlert">
                         <nb-alert class="alert-center" status="danger">
@@ -48,7 +48,7 @@
                     </div>
                 </div>
                 
-                <div class="form-group row offset-sm-4">
+                <div class="form-group row offset-sm-3">
                     <div *ngIf="isAddPage">
                         <button type="submit" nbButton status="primary" (click)="addCity()" [disabled]="addcityform.invalid">Add</button>
                     </div>

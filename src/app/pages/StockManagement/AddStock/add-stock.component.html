@@ -17,11 +17,11 @@
 <div *ngIf="isFixDefectPage">
     <h2>Fix Defective Stock</h2>
 </div>
-    
+   
 <body>
     <nb-card>
         <nb-card-body>
-            <form #addstockform=ngForm class="form-horizontal">
+            <form #addstockform=ngForm>
                 <div class="alertWrapper">
                     <div *ngIf="errorAlert">
                         <nb-alert class="alert-center" status="danger">
@@ -45,9 +45,9 @@
                 <div *ngIf="!isReportDefectPage && !isFixDefectPage" class="form-group row">
                     <label for="itemName" class="label col-sm-3 col-form-label">Item name<sup>*</sup></label>
                     <div class="col-sm-6">
-                        <select id="itemName" class="form-control-sm" name="itemName" #itemName=ngModel [ngModel]="stock.Item.ItemID" (ngModelChange)="onItemChange($event)">
-                            <option *ngFor="let item of itemList" [value]="item.ItemID">{{item.ItemName}}</option>
-                        </select>
+                        <nb-select fullWidth id="itemName" name="itemName" #itemName=ngModel [ngModel]="stock.Item.ItemID" (ngModelChange)="onItemChange($event)">
+                            <nb-option *ngFor="let item of itemList" [value]="item.ItemID">{{item.ItemName}}</nb-option>
+                        </nb-select>
                     </div>
                 </div>
                 <div *ngIf="!isReportDefectPage" class="form-group row">
@@ -147,7 +147,7 @@
                 <div class="form-group row">
                     <label for="cityName" class="label col-sm-3 col-form-label">City<sup>*</sup></label>
                     <div class="col-sm-6">
-                        <nb-select id="cityName" name="cityName" #cityName=ngModel [ngModel]="stock.City.CityID" (ngModelChange)="onCityChange($event)">
+                        <nb-select fullWidth id="cityName" name="cityName" #cityName=ngModel [ngModel]="stock.City.CityID" (ngModelChange)="onCityChange($event)">
                             <nb-option *ngFor="let city of cityList" [value]="city.CityID">{{city.CityName}}</nb-option>
                         </nb-select>
                         <!-- <select id="cityName" class="form-control-sm" name="cityName" #cityName=ngModel [(ngModel)]="stock.Place">
@@ -155,7 +155,7 @@
                         </select> -->
                     </div>
                 </div>
-                <div class="form-group row offset-sm-4">
+                <div class="form-group row offset-sm-3">
                     <div *ngIf="isAddPage">
                         <button type="submit" nbButton status="primary" (click)="addStock()" [disabled]="addstockform.invalid">Add</button>
                     </div>
