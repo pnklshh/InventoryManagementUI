@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+</head>
+<h2>Report Usage</h2>
+<body>
+    <form #reportusage=ngForm class="form-horizontal">
+        <div class="alertWrapper">
+            <div *ngIf="errorAlert" class="alert alert-danger">
+                <p>
+                    {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                </p>
+            </div>
+            <div *ngIf="successAlert" class="alert alert-success">
+                <p>
+                    {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                </p>
+            </div>
+        </div>
+        <div class="mandate-notify">
+            <sup>*</sup>&nbsp;Mandatory fields
+        </div>
+        
+        <div class="form-group row">
+            <label for="engineerName" class="col-sm-3 form-control-label">Engineer name<sup>*</sup></label>
+            <div class="col-sm-6">
+                <select id="engineerName" class="form-control-sm" name="engineerName" #engineerName=ngModel [ngModel]="usageDetail.Engineer.EngineerID" (ngModelChange)="onEngineerChange($event)">
+                    <option *ngFor="let engineer of engineerList" [value]="engineer.EngineerID">{{engineer.EngineerName}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="itemName" class="col-sm-3 form-control-label">Item name<sup>*</sup></label>
+            <div class="col-sm-6">
+                <select id="itemName" class="form-control-sm" name="itemName" #itemName=ngModel [ngModel]="usageDetail.Item.ItemID" (ngModelChange)="onItemChange($event)">
+                    <option *ngFor="let item of itemList" [value]="item.ItemID">{{item.ItemName}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="quantity" class="col-sm-3 form-control-label">Quantity<sup>*</sup></label>
+            <div class="col-sm-6">
+                <input type="number" id="quantity" class="form-control-sm" name="quantity" #quantity=ngModel [(ngModel)]="usageDetail.QuantityUsed" min="1" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57" required>
+                <div *ngIf="quantity.invalid && (quantity.dirty || quantity.touched)" class="validate">
+                    <div *ngIf="quantity.errors.required">
+                        Quantity is required.
+                    </div>
+                </div>
+                <div *ngIf="usageDetail.QuantityUsed == 0" class="validate">
+                    Quantity cannot be 0 ! 
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="warranty" class="col-sm-3 form-control-label">Warranty</label>
+            <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-1">
+                        <input type="radio" id="warranty" class="form-control-sm" name="warranty" [value]="true" #warranty=ngModel [(ngModel)]="usageDetail.Warranty">
+                    </div>
+                    <div class="col-sm-3">
+                        Warranted
+                    </div>
+                    <div class="col-sm-1">
+                        <input type="radio" id="warranty" class="form-control-sm" name="warranty" [value]="false" #warranty=ngModel [(ngModel)]="usageDetail.Warranty">
+                    </div>
+                    <div class="col-sm-3">
+                        Unwarranted
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="billno" class="col-sm-3 form-control-label">Bill Number<sup>*</sup></label>
+            <div class="col-sm-6">
+                <input type="number" id="billno" class="form-control-sm" name="billno" #billno=ngModel [(ngModel)]="usageDetail.BillNumber" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57" required>
+                <div *ngIf="billno.invalid && (billno.dirty || billno.touched)" class="validate">
+                    <div *ngIf="billno.errors.required">
+                        Bill number is required.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="amount" class="col-sm-3 form-control-label">Amount</label>
+            <div class="col-sm-6">
+                <input type="number" id="amount" class="form-control-sm" name="amount" #amount=ngModel [(ngModel)]="usageDetail.Amount" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="service" class="col-sm-3 form-control-label">Service charge</label>
+            <div class="col-sm-6">
+                <input type="number" id="service" class="form-control-sm" name="service" #service=ngModel [(ngModel)]="usageDetail.ServiceCharge" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="itemName" class="col-sm-3 form-control-label">Date<sup>*</sup></label>
+            <div class="col-sm-6">
+                <input type="date" id="date" class="form-control-sm" name="date" max={{todayDate}} #date=ngModel [ngModel]="usageDetail.UsageDate | date: 'yyyy-MM-dd'" (ngModelChange)="usageDetail.UsageDate=$event" required>
+                <div *ngIf="date.invalid && (date.dirty || date.touched)" class="validate">
+                    <div *ngIf="date.errors.required">
+                        Date is required.
+                    </div>
+                    <div *ngIf="usageDate > todayDate" class="validate">
+                        Please select a valid date.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="partyName" class="col-sm-3 form-control-label">Party name<sup>*</sup></label>
+            <div class="col-sm-6">
+                <input type="text" id="partyName" class="form-control-sm" name="partyName" #partyName=ngModel [(ngModel)]="usageDetail.PartyName" required>
+                <div *ngIf="partyName.invalid && (partyName.dirty || partyName.touched)" class="validate">
+                    <div *ngIf="partyName.errors.required">
+                        Party name is required.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="cityName" class="col-sm-3 form-control-label">City<sup>*</sup></label>
+            <div class="col-sm-6">
+                <select id="cityName" class="form-control-sm" name="cityName" #cityName=ngModel [ngModel]="usageDetail.City.CityID" (ngModelChange)="onCityChange($event)">
+                    <option *ngFor="let city of cityList" [value]="city.CityID">{{city.CityName}}</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group row offset-sm-4">
+            <button type="submit" class="btn btn-primary" (click)="reportUsage()" [disabled]="reportusage.invalid">Report</button>
+        </div>
+    </form>
+</body>
+</html>

@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+</head>
+
+<div *ngIf="isAddPage">
+    <h2>Add City</h2>
+</div>
+<div *ngIf="!isAddPage">
+    <h2>Update City</h2>
+</div>
+
+<body>    
+    <nb-card>
+        <nb-card-body>
+            <form #addcityform=ngForm class="form-horizontal">
+                <div class="alertWrapper">
+                    <div *ngIf="errorAlert">
+                        <nb-alert class="alert-center" status="danger">
+                            <p>
+                                {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                            </p>
+                        </nb-alert>
+                    </div>
+                    <div *ngIf="successAlert">
+                        <nb-alert class="alert-center" status="success">
+                            <p>
+                                {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                            </p>
+                        </nb-alert>
+                    </div>
+                </div>
+                <div class="mandate-notify">
+                    <sup>*</sup>&nbsp;Mandatory fields
+                </div>
+                
+                <div class="form-group row">
+                    <label for="cityName" class="label col-sm-3 col-form-label">City name<sup>*</sup></label>
+                    <div class="col-sm-6">
+                        <input type="text" nbInput fullWidth id="cityName" placeholder="City name" name="cityName" #cityName=ngModel [(ngModel)]="city.CityName" required>
+                        <div *ngIf="cityName.invalid && (cityName.dirty || cityName.touched)" class="validate">
+                            <div *ngIf="cityName.errors.required">
+                                City name is required.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group row offset-sm-4">
+                    <div *ngIf="isAddPage">
+                        <button type="submit" nbButton status="primary" (click)="addCity()" [disabled]="addcityform.invalid">Add</button>
+                    </div>
+                    <div *ngIf="!isAddPage">
+                        <button type="submit" nbButton status="primary" (click)="addCity()" [disabled]="addcityform.invalid">Update</button>
+                    </div>
+                </div>
+            </form>
+        </nb-card-body>
+    </nb-card>  
+</body>
+</html>

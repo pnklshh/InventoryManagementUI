@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+</head>
+<h2>Allocate Item</h2>
+<body>
+    <form #allocateform=ngForm class="form-horizontal">
+        <div class="alertWrapper">
+            <div *ngIf="errorAlert" class="alert alert-danger">
+                <p>
+                    {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                </p>
+            </div>
+            <div *ngIf="successAlert" class="alert alert-success">
+                <p>
+                    {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                </p>
+            </div>
+        </div>
+        <div class="mandate-notify">
+            <sup>*</sup>&nbsp;Mandatory fields
+        </div>
+        
+        <div class="form-group row">
+            <label for="engineerName" class="col-sm-3 form-control-label">Engineer name<sup>*</sup></label>
+            <div class="col-sm-6">
+                <select id="engineerName" class="form-control-sm" name="engineerName" #engineerName=ngModel [ngModel]="allocationDetail.Engineer.EngineerID" (ngModelChange)="onEngineerChange($event)">
+                    <option *ngFor="let engineer of engineerList" [value]="engineer.EngineerID">{{engineer.EngineerName}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="itemName" class="col-sm-3 form-control-label">Item name<sup>*</sup></label>
+            <div class="col-sm-6">
+                <select id="itemName" class="form-control-sm" name="itemName" #itemName=ngModel [ngModel]="allocationDetail.Item.ItemID" (ngModelChange)="onItemChange($event)">
+                    <option *ngFor="let item of itemList" [value]="item.ItemID">{{item.ItemName}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="cityName" class="col-sm-3 form-control-label">City<sup>*</sup></label>
+            <div class="col-sm-6">
+                <select id="cityName" class="form-control-sm" name="cityName" #cityName=ngModel [ngModel]="allocationDetail.City.CityID" (ngModelChange)="onCityChange($event)">
+                    <option *ngFor="let city of cityList" [value]="city.CityID">{{city.CityName}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="quantity" class="col-sm-3 form-control-label">Quantity<sup>*</sup></label>
+            <div class="col-sm-6">
+                <input type="number" id="quantity" class="form-control-sm" name="quantity" #quantity=ngModel [(ngModel)]="allocationDetail.QuantityAllocated" min="1" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57" required>
+                <div *ngIf="quantity.invalid && (quantity.dirty || quantity.touched)" class="validate">
+                    <div *ngIf="quantity.errors.required">
+                        Quantity is required.
+                    </div>
+                </div>
+                <div *ngIf="allocationDetail.QuantityAllocated == 0" class="validate">
+                    Quantity cannot be 0 ! 
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="date" class="col-sm-3 form-control-label">Date<sup>*</sup></label>
+            <div class="col-sm-6">
+                <input type="date" id="date" class="form-control-sm" name="date" max={{todayDate}} #date=ngModel [ngModel]="allocationDetail.AllocationDate | date: 'yyyy-MM-dd'" (ngModelChange)="allocationDetail.AllocationDate=$event" required>
+                <div *ngIf="date.invalid && (date.dirty || date.touched)" class="validate">
+                    <div *ngIf="date.errors.required">
+                        Date is required.
+                    </div>
+                </div>
+                <div *ngIf="allocationDate > todayDate" class="validate">
+                    Please select a valid date.  
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group row offset-sm-4">
+            <button type="submit" class="btn btn-primary" (click)="allocateItem()" [disabled]="allocateform.invalid">Allocate</button>
+        </div>
+    </form>
+</body>
+</html>

@@ -1,0 +1,176 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+</head>
+
+<div *ngIf="isAddPage">
+    <h2>Add Stock</h2>
+</div>
+<div *ngIf="isEditPage">
+    <h2>Update Stock</h2>
+</div>
+<div *ngIf="isReportDefectPage">
+    <h2>Report Defective Stock</h2>
+</div>
+<div *ngIf="isFixDefectPage">
+    <h2>Fix Defective Stock</h2>
+</div>
+    
+<body>
+    <nb-card>
+        <nb-card-body>
+            <form #addstockform=ngForm class="form-horizontal">
+                <div class="alertWrapper">
+                    <div *ngIf="errorAlert">
+                        <nb-alert class="alert-center" status="danger">
+                            <p>
+                                {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                            </p>
+                        </nb-alert>
+                    </div>
+                    <div *ngIf="successAlert">
+                        <nb-alert class="alert-center" status="success">
+                            <p>
+                                {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                            </p>
+                        </nb-alert>
+                    </div>
+                </div>
+                <div class="mandate-notify">
+                    <sup>*</sup>&nbsp;Mandatory fields
+                </div>
+            
+                <div *ngIf="!isReportDefectPage && !isFixDefectPage" class="form-group row">
+                    <label for="itemName" class="label col-sm-3 col-form-label">Item name<sup>*</sup></label>
+                    <div class="col-sm-6">
+                        <select id="itemName" class="form-control-sm" name="itemName" #itemName=ngModel [ngModel]="stock.Item.ItemID" (ngModelChange)="onItemChange($event)">
+                            <option *ngFor="let item of itemList" [value]="item.ItemID">{{item.ItemName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div *ngIf="!isReportDefectPage" class="form-group row">
+                    <label for="quantity" class="label col-sm-3 col-form-label">Quantity<sup>*</sup></label>
+                    <div class="col-sm-6">
+                        <input type="number" id="quantity" nbInput fullWidth placeholder="Quantity" name="quantity" #quantity=ngModel [(ngModel)]="stock.Quantity" min="1" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57" required>
+                        <div *ngIf="quantity.invalid && (quantity.dirty || quantity.touched)" class="validate">
+                            <div *ngIf="quantity.errors.required">
+                                Quantity is required.
+                            </div>
+                        </div>
+                        <div *ngIf="stock.Quantity == 0" class="validate">
+                            Quantity cannot be 0 ! 
+                        </div>
+                        <div *ngIf="isFixDefectPage && stock.Quantity > maxFixedQuantity" class="validate">
+                            Quantity cannot be more than {{maxFixedQuantity}} ! 
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="!isFixDefectPage" class="form-group row">
+                    <label for="defective" class="label col-sm-3 col-form-label">Defective<sup>*</sup></label>
+                    <div class="col-sm-6">
+                        <input type="number" id="defective" nbInput fullWidth name="defective" #defective=ngModel [(ngModel)]="stock.Defective" min="0" max="stock.Quantity" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57" required>
+                        <div *ngIf="defective.invalid && (defective.dirty || defective.touched)" class="validate">
+                            <div *ngIf="defective.errors.required">
+                                Number of Defective items is required.
+                            </div>
+                        </div>
+                        <div *ngIf="stock.Defective > stock.Quantity" class="validate">
+                            Defective items cannot be more than quantity ! 
+                        </div>
+                        <div *ngIf="(stock.Defective <= stock.Quantity) && (stock.Dead <= stock.Quantity)" class="validate">
+                            <div *ngIf="(stock.Defective + stock.Dead) > stock.Quantity" class="validate">
+                                Sum of defective and dead items cannot be more than quantity ! 
+                            </div>
+                        </div>
+                        <div *ngIf="isReportDefectPage && stock.Defective == 0" class="validate">
+                            Please enter atleast 1 quantity to report defective ! 
+                        </div>
+                    </div>
+                </div> 
+                <div *ngIf="!isReportDefectPage && !isFixDefectPage" class="form-group row">
+                    <label for="dead" class="label col-sm-3 col-form-label">Dead<sup>*</sup></label>   
+                    <div class="col-sm-6">
+                        <input type="number" id="dead" nbInput fullWidth name="dead" #dead=ngModel [(ngModel)]="stock.Dead" min="0" max="stock.Quantity" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57" required>
+                        <div *ngIf="dead.invalid && (dead.dirty || dead.touched)" class="validate">
+                            <div *ngIf="dead.errors.required">
+                                Number of dead items is required.
+                            </div>
+                        </div>
+                        <div *ngIf="stock.Dead > stock.Quantity" class="validate">
+                            Dead items cannot be more than quantity ! 
+                        </div>
+                        <div *ngIf="(stock.Defective <= stock.Quantity) && (stock.Dead <= stock.Quantity)" class="validate">
+                            <div *ngIf="(stock.Defective + stock.Dead) > stock.Quantity" class="validate">
+                                Sum of defective and dead items cannot be more than quantity ! 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="!isReportDefectPage && !isFixDefectPage" class="form-group row">
+                    <label for="challan" class="label col-sm-3 col-form-label">Challan number<sup>*</sup></label>
+                    <div class="col-sm-6">
+                        <input type="text" id="challan" nbInput fullWidth placeholder="Challan number" name="challan" #challan=ngModel [(ngModel)]="stock.ChallanNumber" required>
+                        <div *ngIf="challan.invalid && (challan.dirty || challan.touched)" class="validate">
+                            <div *ngIf="challan.errors.required">
+                                Challan number is required.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="!isReportDefectPage && !isFixDefectPage" class="form-group row">
+                    <label for="date" class="label col-sm-3 col-form-label">Date<sup>*</sup></label>
+                    <div class="col-sm-6">
+                        <input type="date" id="date" nbInput fullWidth name="date" max={{todayDate}} #date=ngModel [ngModel]="stock.Date | date: 'yyyy-MM-dd'" (ngModelChange)="stock.Date=$event" required>
+                        <div *ngIf="date.invalid && (date.dirty || date.touched)" class="validate">
+                            <div *ngIf="date.errors.required">
+                                Date is required.
+                            </div>
+                        </div>
+                        <div *ngIf="stockDate > todayDate" class="validate">
+                            Please select a valid date.  
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="form-group row">
+                    <label for="place" class="label col-sm-3 col-form-label">Place<sup>*</sup></label>
+                    <div class="col-sm-6">
+                        <input type="text" id="place" class="form-control-sm" name="place" #place=ngModel [(ngModel)]="stock.Place" required>
+                        <div *ngIf="place.invalid && (place.dirty || place.touched)" class="validate">
+                            <div *ngIf="place.errors.required">
+                                Place is required.
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+                <div class="form-group row">
+                    <label for="cityName" class="label col-sm-3 col-form-label">City<sup>*</sup></label>
+                    <div class="col-sm-6">
+                        <nb-select id="cityName" name="cityName" #cityName=ngModel [ngModel]="stock.City.CityID" (ngModelChange)="onCityChange($event)">
+                            <nb-option *ngFor="let city of cityList" [value]="city.CityID">{{city.CityName}}</nb-option>
+                        </nb-select>
+                        <!-- <select id="cityName" class="form-control-sm" name="cityName" #cityName=ngModel [(ngModel)]="stock.Place">
+                            <option *ngFor="let city of common.cityList" [value]="city">{{city}}</option>
+                        </select> -->
+                    </div>
+                </div>
+                <div class="form-group row offset-sm-4">
+                    <div *ngIf="isAddPage">
+                        <button type="submit" nbButton status="primary" (click)="addStock()" [disabled]="addstockform.invalid">Add</button>
+                    </div>
+                    <div *ngIf="isEditPage">
+                        <button type="submit" nbButton status="primary" (click)="addStock()" [disabled]="addstockform.invalid">Update</button>
+                    </div>
+                    <div *ngIf="isReportDefectPage">
+                        <button type="submit" nbButton status="primary" (click)="addStock()" [disabled]="addstockform.invalid">Report</button>
+                    </div>
+                    <div *ngIf="isFixDefectPage">
+                        <button type="submit" nbButton status="primary" (click)="addStock()" [disabled]="addstockform.invalid">Fix</button>
+                    </div>    
+                </div>
+            </form>
+        </nb-card-body>
+    </nb-card>
+</body>
+</html>

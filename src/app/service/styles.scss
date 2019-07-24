@@ -1,0 +1,85 @@
+sup{
+    color:red;
+    padding-left: 5px; 
+}
+.mandate-notify{
+    text-align: right;
+    color: red;
+    padding-right: 10px;
+}
+.alertWrapper{
+    margin-left: 140px;
+    margin-right: 140px;
+    padding-top:10px;
+}
+.alert-center{
+    text-align: center;
+    border-radius: 25px;
+    // border-style: solid !important;
+    // border-width: 2px !important;
+    // color: black;
+}
+.alert{
+    text-align: center;
+    border-radius: 25px;
+    border-style: solid !important;
+    border-width: 2px !important;
+    color: black;
+    //height:50px;
+}
+.alert-danger{
+    background-color: #fa8072;
+    border-color: red !important;
+}
+.alert-success{
+    background-color: lightgreen;
+    border-color: green !important;
+}
+.close{
+    height:30px;
+    width:20px;
+    float: right;
+    text-align: center;
+}
+.validate{
+    color:red;
+    font-size: small;
+    text-align: left;
+}
+label{
+    text-align: right;    
+}
+.form-control-sm{
+    width:100%;
+}
+.btn{
+    width: 100px;
+    border-radius: 0%;
+}
+
+.loader {
+    border: 6px solid #f3f3f3; /* Light grey */
+    border-top: 6px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.loaderContainer{
+    padding-left: 400px;
+    padding-top: 70px;
+}
+
+#datatable{
+    width: 100%;
+}
+.datatableWrapper{
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}

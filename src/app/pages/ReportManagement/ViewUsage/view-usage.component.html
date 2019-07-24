@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+</head>
+<h2>View Usage</h2>
+<body>
+    <div class="alertWrapper">
+        <div *ngIf="errorAlert" class="alert alert-danger">
+            <p>
+                {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+            </p>
+        </div>
+        <div *ngIf="successAlert" class="alert alert-success">
+            <p>
+                {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+            </p>
+        </div>
+    </div>
+        
+    <div class="datatableWrapper">
+        <table id="datatable" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Engineer name</th>
+                    <th>Item name</th>
+                    <th>Quantity</th>
+                    <th>Warranted</th>
+                    <th>Usage date</th>
+                    <th>Bill number</th>
+                    <th>Amount</th>
+                    <th>Service charge</th>
+                    <th>Party name</th>
+                    <th>City</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody *ngIf="usageList.length > 0">
+                <tr *ngFor="let usage of usageList">
+                    <td>{{usage.Engineer.EngineerName}}</td>
+                    <td>{{usage.Item.ItemName}}</td>
+                    <td>{{usage.QuantityUsed}}</td>
+                    <td>{{usage.Warranty}}</td>
+                    <td>{{usage.UsageDate | date:'dd-MM-yyyy'}}</td>
+                    <td>{{usage.BillNumber}}</td>
+                    <td>{{usage.Amount}}</td>
+                    <td>{{usage.ServiceCharge}}</td>
+                    <td>{{usage.PartyName}}</td>
+                    <td>{{usage.City.CityName}}</td>
+                    <td>
+                        <a (click)="reportDefect(usage)">
+                            <nb-icon icon="alert-triangle" title="Report defect"></nb-icon>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

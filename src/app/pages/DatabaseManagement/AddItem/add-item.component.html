@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+</head>
+
+<div *ngIf="isAddPage">
+    <h2>Add Item</h2>
+</div>
+<div *ngIf="!isAddPage">
+    <h2>Update Item</h2>
+</div>
+
+<body>
+    <form #additemform=ngForm class="form-horizontal">
+        <div class="alertWrapper">
+            <div *ngIf="errorAlert" class="alert alert-danger">
+                <p>
+                    {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                </p>
+            </div>
+            <div *ngIf="successAlert" class="alert alert-success">
+                <p>
+                    {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                </p>
+            </div>
+        </div>
+        <div class="mandate-notify">
+            <sup>*</sup>&nbsp;Mandatory fields
+        </div>
+    
+        <div class="form-group row">
+            <label for="itemName" class="col-sm-3 form-control-label">Item name<sup>*</sup></label>
+            <div class="col-sm-6">
+                <input type="text" id="itemName" class="form-control-sm" name="itemName" #itemName=ngModel [(ngModel)]="item.ItemName" required>
+                <div *ngIf="itemName.invalid && (itemName.dirty || itemName.touched)" class="validate">
+                    <div *ngIf="itemName.errors.required">
+                        Item name is required.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="groupName" class="col-sm-3 form-control-label">Group<sup>*</sup></label>
+            <div class="col-sm-6">
+                <select id="groupName" class="form-control-sm" name="groupName" #groupName=ngModel [ngModel]="item.ItemGroup.GroupID" (ngModelChange)="onGroupChange($event)">
+                    <option *ngFor="let group of groupList" [value]="group.GroupID">{{group.GroupName}}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row offset-sm-4">
+            <div *ngIf="isAddPage">
+                <button type="submit" class="btn btn-primary" (click)="addItem()" [disabled]="additemform.invalid">Add</button>
+            </div>
+            <div *ngIf="!isAddPage">
+                <button type="submit" class="btn btn-primary" (click)="addItem()" [disabled]="additemform.invalid">Update</button>
+            </div>
+        </div>
+    </form>
+</body>
+</html>

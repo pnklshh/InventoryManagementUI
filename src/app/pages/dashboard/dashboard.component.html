@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+</head>
+
+<body>
+  <div class="chartContainer">
+    <!-- <div *ngIf="stockSummaryLoader" class="loaderContainer">
+      <div class="loader"></div>
+    </div>
+    <div *ngIf="!stockSummaryLoader && stockchartLabels.length > 0">
+      <canvas baseChart
+        [chartType]="'bar'"
+        [datasets]="stockchartData"
+        [labels]="stockchartLabels"
+        [options]="stockchartOptions"
+        (chartHover)="stockchartHovered($event)"
+        (chartClick)="stockchartClicked($event)">
+      </canvas>
+    </div>
+    <div *ngIf="!stockSummaryLoader && stockchartLabels.length == 0">
+      <h5><p class="emptyContainer">No Data available for Stock Summary</p></h5>
+    </div>   -->
+    <div class="cardContainer">
+      <nb-card class="card" status="primary">
+        <nb-card-header>Items in Stock</nb-card-header>
+        <nb-card-body>
+          {{totalItemsinStock}}
+        </nb-card-body>
+      </nb-card>
+    </div>
+    <div class="cardContainer">
+      <nb-card class="card" status="success">
+        <nb-card-header>Items Allocated</nb-card-header>
+        <nb-card-body>
+          {{totalItemsAllocated}}
+        </nb-card-body>
+      </nb-card>
+    </div>
+    <div class="cardContainer">
+      <nb-card status="info" class="card">
+        <nb-card-header>Items Used</nb-card-header>
+        <nb-card-body>
+          {{totalItemsUsed}}
+        </nb-card-body>
+      </nb-card>
+    </div>
+    <div class="cardContainer">
+      <nb-card class="card" status="warning">
+        <nb-card-header>Amount</nb-card-header>
+        <nb-card-body>
+          {{totalAmount}}
+        </nb-card-body>
+      </nb-card>
+    </div>
+    <div class="cardContainer">
+      <nb-card class="card" status="danger">
+        <nb-card-header>Service charge</nb-card-header>
+        <nb-card-body>
+          {{totalServiceCharge}}
+        </nb-card-body>
+      </nb-card>
+    </div>
+  </div>
+
+  <div class="chartContainer">
+    <div *ngIf="allocationSummaryLoader" class="loaderContainer">
+      <div class="loader"></div>
+    </div>
+    <div *ngIf="!allocationSummaryLoader && allocationchartData.length > 0">
+      <canvas baseChart
+        [chartType]="'bar'"
+        [data]="allocationchartData"
+        [labels]="allocationchartLabels"
+        [options]="allocationchartOptions"
+        (chartHover)="allocationchartHovered($event)"
+        (chartClick)="allocationchartClicked($event)">
+      </canvas>
+    </div>
+    <div *ngIf="!allocationSummaryLoader && allocationchartData.length == 0">
+      <h5><p class="emptyContainer">No Data available for Allocation Summary</p></h5>
+    </div>
+  </div>
+
+  <div class="chartContainer">
+    <div *ngIf="usageSummaryLoader" class="loaderContainer">
+      <div class="loader"></div>
+    </div>
+    <div *ngIf="!usageSummaryLoader && usagechartData.length > 0">
+      <canvas baseChart
+        [chartType]="'bar'"
+        [data]="usagechartData"
+        [labels]="usagechartLabels"
+        [options]="usagechartOptions"
+        (chartHover)="usagechartHovered($event)"
+        (chartClick)="usagechartClicked($event)">
+      </canvas>
+    </div>
+    <div *ngIf="!usageSummaryLoader && usagechartData.length == 0">
+      <h5><p class="emptyContainer">No Data available for Usage Summary</p></h5>
+    </div>
+  </div>
+</body>

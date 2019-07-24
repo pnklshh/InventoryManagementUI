@@ -1,0 +1,22 @@
+<div class="modal-header">
+    <h4 class="modal-title">Stock distribution</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div *ngIf="chartData.length > 0" class="chartContainer">
+        <canvas baseChart
+          [chartType]="chartType"
+          [data]="chartData"
+          [labels]="chartLabels"
+          [options]="chartOptions"
+          (chartHover)="chartHovered($event)"
+          (chartClick)="chartClicked($event)">
+        </canvas>
+    </div>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
+</div>
