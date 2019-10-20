@@ -12,23 +12,29 @@
     <h2>Update City</h2>
 </div>
 
-<body>    
+<body [class.makeblur]='loading'>    
     <nb-card>
         <nb-card-body>
             <form #addcityform=ngForm>
                 <div class="alertWrapper">
                     <div *ngIf="errorAlert">
                         <nb-alert class="alert-center" status="danger">
-                            <p>
-                                {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
-                            </p>
+                            <div class="alertMessage">
+                                <div class="msgDiv">{{message}}</div>
+                                <div class="msgDiv closeDiv">
+                                    <a (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                                </div>
+                            </div>
                         </nb-alert>
                     </div>
                     <div *ngIf="successAlert">
                         <nb-alert class="alert-center" status="success">
-                            <p>
-                                {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
-                            </p>
+                            <div class="alertMessage">
+                                <div class="msgDiv">{{message}}</div>
+                                <div class="msgDiv closeDiv">
+                                    <a (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                                </div>
+                            </div>
                         </nb-alert>
                     </div>
                 </div>
@@ -50,10 +56,10 @@
                 
                 <div class="form-group row offset-sm-3">
                     <div *ngIf="isAddPage">
-                        <button type="submit" nbButton status="primary" (click)="addCity()" [disabled]="addcityform.invalid">Add</button>
+                        <button type="submit" nbButton status="primary" (click)="addCity()" [disabled]="addcityform.invalid || loading">Add</button>
                     </div>
                     <div *ngIf="!isAddPage">
-                        <button type="submit" nbButton status="primary" (click)="addCity()" [disabled]="addcityform.invalid">Update</button>
+                        <button type="submit" nbButton status="primary" (click)="addCity()" [disabled]="addcityform.invalid || loading">Update</button>
                     </div>
                 </div>
             </form>

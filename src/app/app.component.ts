@@ -6,6 +6,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AnalyticsService } from './@core/utils/analytics.service';
 import { DatasharingService } from '../app/service/datasharing-service';
+import { NbMenuService } from '@nebular/theme';
 
 @Component({
   selector: 'ngx-app',
@@ -24,5 +25,7 @@ export class AppComponent implements OnInit {
     this.datasharingService.loaderSubject.subscribe((value: boolean) => {
       this.showLoader = value;
     });
+
   }
+
 }

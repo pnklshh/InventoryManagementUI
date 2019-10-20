@@ -6,6 +6,7 @@ import { ApiServiceCall } from '../../../service/api-call.service';
 import { DatePipe, formatDate } from '../../../../../node_modules/@angular/common';
 import { City } from '../../../models/City';
 import { DatasharingService } from '../../../service/datasharing-service';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'report-usage',
@@ -18,36 +19,59 @@ export class ReportUsageComponent implements OnInit {
     public errorAlert:boolean=false;
     public successAlert:boolean=false;
     public message:string="";
+    public loading:boolean=true;
+    public isAddPage: boolean = true;
 
-    public usageDetail: Usage = new Usage();
-    public engineer: Engineer=new Engineer();
-    public city: City = new City();
+    public usageDetail: Usage;
+    
     public engineerList: Engineer[]=[];
-    public item:Item=new Item();
     public itemList: Item[]=[];
     public cityList: City[]=[];
 
     public todayDate:string=formatDate(new Date(),'yyyy-MM-dd','en-US');        //new DatePipe('en-US').transform(Date.now(),'yyyy-MM-dd');
     public usageDate:string=formatDate(new Date(),'yyyy-MM-dd','en-US');        
 
-    constructor(private apiCall: ApiServiceCall, private datasharingService: DatasharingService){}
+    constructor(private apiCall: ApiServiceCall, private datasharingService: DatasharingService, private router: Router, private activatedRoute: ActivatedRoute){}
 
     ngOnInit()
     {
+        this.datasharingService.showLoader();
+        this.initializeForm();
+        if(this.datasharingService.getUserDetail() == null)
+        {
+            this.router.navigate(['/auth/login']);
+        }
+        else
+        {
+            this.getEngineers();
+            this.getItems();
+            this.getCities();
+            if(this.activatedRoute.routeConfig.path != "reportusage")
+            {
+                this.isAddPage = false;
+                this.activatedRoute.params.subscribe(param => {
+                    this.usageDetail = JSON.parse(param["usage"]);
+                    console.log(this.usageDetail);
+                });
+            }
+        }
+    }
+
+    initializeForm()
+    {
+        this.usageDetail = new Usage();
         this.usageDetail.UsageDate=new Date(Date.now());
         this.usageDetail.Warranty=true;
-        this.usageDetail.Engineer=this.engineer;
-        this.usageDetail.Item=this.item;
-        this.usageDetail.City=this.city;
-        this.getEngineers();
-        this.getItems();
-        this.getCities();
+        this.usageDetail.Engineer = new Engineer();
+        this.usageDetail.Item = new Item();
+        this.usageDetail.City = new City();
     }
 
     getEngineers()
     {
         let url = "api/Engineer/GetAllEngineers";
         this.datasharingService.showLoader();
+        this.loading = true;
         try
         {
             this.apiCall.GetData(url).subscribe(data=>
@@ -62,20 +86,24 @@ export class ReportUsageComponent implements OnInit {
                 else
                 {
                     this.engineerList=appData;
-                    this.usageDetail.Engineer=this.engineerList[0];
+                    if(this.isAddPage)
+                        this.usageDetail.Engineer=this.engineerList[0];
                 }
                 this.datasharingService.hideLoader();
+                this.loading = false;
             },
             err=>
             {
                 console.log(err);
-                this.datasharingService.hideLoader();
+                // this.datasharingService.hideLoader();
+                // this.loading = false;
             });
         }
         catch(ex)
         {
             console.log(ex);
-            this.datasharingService.hideLoader();
+            // this.datasharingService.hideLoader();
+            // this.loading = false;
         }
     }
 
@@ -83,6 +111,7 @@ export class ReportUsageComponent implements OnInit {
     {
         let url = "api/Item/GetAllItems";
         this.datasharingService.showLoader();
+        this.loading = true;
         try
         {
             this.apiCall.GetData(url).subscribe(data=>
@@ -97,20 +126,24 @@ export class ReportUsageComponent implements OnInit {
                 else
                 {
                     this.itemList=appData;
-                    this.usageDetail.Item=this.itemList[0];
+                    if(this.isAddPage)
+                        this.usageDetail.Item=this.itemList[0];
                 }
                 this.datasharingService.hideLoader();
+                this.loading = false;
             },
             err=>
             {
                 console.log(err);
-                this.datasharingService.hideLoader();
+                // this.datasharingService.hideLoader();
+                // this.loading = false;
             });
         }
         catch(ex)
         {
             console.log(ex);
-            this.datasharingService.hideLoader();
+            // this.datasharingService.hideLoader();
+            // this.loading = false;
         }
     }
 
@@ -118,6 +151,7 @@ export class ReportUsageComponent implements OnInit {
     {
         let url = "api/City/GetAllCities";
         this.datasharingService.showLoader();
+        this.loading = true;
         try
         {
             this.apiCall.GetData(url).subscribe(data=>
@@ -132,20 +166,24 @@ export class ReportUsageComponent implements OnInit {
                 else
                 {
                     this.cityList=appData;
-                    this.usageDetail.City=this.cityList[0];
+                    if(this.isAddPage)
+                        this.usageDetail.City=this.cityList[0];
                 }
                 this.datasharingService.hideLoader();
+                this.loading = false;
             },
             err=>
             {
                 console.log(err);
-                this.datasharingService.hideLoader();
+                // this.datasharingService.hideLoader();
+                // this.loading = false;
             });
         }
         catch(ex)
         {
             console.log(ex);
-            this.datasharingService.hideLoader();
+            // this.datasharingService.hideLoader();
+            // this.loading = false;
         }
     }
 
@@ -161,8 +199,14 @@ export class ReportUsageComponent implements OnInit {
         }
         else
         {
-            let url = "api/Usage/ReportUsage";
+            let url = ""
+            if(this.isAddPage)
+                url = "api/Usage/ReportUsage";
+            else
+                url = "api/Usage/UpdateUsage";    
+
             this.datasharingService.showLoader();
+            this.loading = true;
             try
             {
                 this.apiCall.PostData(url,JSON.stringify(this.usageDetail)).subscribe(data=>
@@ -174,22 +218,32 @@ export class ReportUsageComponent implements OnInit {
                     }
                     else
                     {
-                        this.displayMessage("Success","Successfully reported usage");
+                        if(this.isAddPage)
+                            this.displayMessage("Success","Successfully reported usage");
+                        else
+                            this.displayMessage("Success","Successfully updated usage");
                     }
                     this.datasharingService.hideLoader();
+                    this.loading = false;
                 },
                 err=>
                 {
                     console.log(err);
-                    this.datasharingService.hideLoader();
+                    // this.datasharingService.hideLoader();
+                    // this.loading = false;
                 });
             }
             catch(ex)
             {
                 console.log(ex);
-                this.datasharingService.hideLoader();
+                // this.datasharingService.hideLoader();
+                // this.loading = false;
             }
         }
+        this.initializeForm();
+        this.getEngineers();
+        this.getItems();
+        this.getCities();
     }
 
     onEngineerChange(newValue) {

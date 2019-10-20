@@ -12,23 +12,29 @@
     <h2>Update Item</h2>
 </div>
 
-<body>
+<body [class.makeblur]='loading'>
     <nb-card>
         <nb-card-body>
             <form #additemform=ngForm>
                 <div class="alertWrapper">
                     <div *ngIf="errorAlert">
                         <nb-alert class="alert-center" status="danger">
-                            <p>
-                                {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
-                            </p>
+                            <div class="alertMessage">
+                                <div class="msgDiv">{{message}}</div>
+                                <div class="msgDiv closeDiv">
+                                    <a (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                                </div>
+                            </div>
                         </nb-alert>
                     </div>
                     <div *ngIf="successAlert">
                         <nb-alert class="alert-center" status="success">
-                            <p>
-                                {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
-                            </p>
+                            <div class="alertMessage">
+                                <div class="msgDiv">{{message}}</div>
+                                <div class="msgDiv closeDiv">
+                                    <a (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                                </div>
+                            </div>
                         </nb-alert>
                     </div>
                 </div>
@@ -48,20 +54,30 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="groupName" class="label col-sm-3 col-form-label">Group<sup>*</sup></label>
+                    <label for="groupName" class="label col-sm-3 col-form-label">Group</label>
                     <div class="col-sm-6">
-                        <nb-select fullWidth id="groupName" name="groupName" #groupName=ngModel [ngModel]="item.ItemGroup.GroupID" (ngModelChange)="onGroupChange($event)">
-                            <nb-option *ngFor="let group of groupList" [value]="group.GroupID">{{group.GroupName}}</nb-option>
-                        </nb-select>
+                        <select class="form-control-sm" id="groupName" name="groupName" #groupName=ngModel [ngModel]="item.ItemGroup.GroupID" (ngModelChange)="onGroupChange($event)">
+                            <option *ngFor="let group of groupList" [value]="group.GroupID">{{group.GroupName}}</option>
+                        </select>
                     </div>
                 </div>
 
+                <!-- <nb-card>
+                    <nb-card-header>Select</nb-card-header>
+                    <nb-card-body>
+                        <nb-select>
+                            <nb-option value="1">Option 1</nb-option>
+                            <nb-option value="2">Option 2</nb-option>
+                        </nb-select>
+                    </nb-card-body>
+                </nb-card> -->
+              
                 <div class="form-group row offset-sm-3">
                     <div *ngIf="isAddPage">
-                        <button type="submit" nbButton status="primary" (click)="addItem()" [disabled]="additemform.invalid">Add</button>
+                        <button type="submit" nbButton status="primary" (click)="addItem()" [disabled]="additemform.invalid || loading">Add</button>
                     </div>
                     <div *ngIf="!isAddPage">
-                        <button type="submit" nbButton status="primary" (click)="addItem()" [disabled]="additemform.invalid">Update</button>
+                        <button type="submit" nbButton status="primary" (click)="addItem()" [disabled]="additemform.invalid || loading">Update</button>
                     </div>
                 </div>
             </form>

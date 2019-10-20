@@ -4,24 +4,35 @@
     <title></title>
 	<meta charset="utf-8" />
 </head>
-<h2>Allocate Item</h2>
-<body>
+<div *ngIf="isAddPage">
+    <h2>Allocate Item</h2>
+</div>
+<div *ngIf="!isAddPage">
+    <h2>Update Allocation</h2>
+</div>
+<body [class.makeblur]='loading'>
     <nb-card>
         <nb-card-body>
             <form #allocateform=ngForm>
                 <div class="alertWrapper">
                     <div *ngIf="errorAlert">
                         <nb-alert class="alert-center" status="danger">
-                            <p>
-                                {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
-                            </p>
+                            <div class="alertMessage">
+                                <div class="msgDiv">{{message}}</div>
+                                <div class="msgDiv closeDiv">
+                                    <a (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                                </div>
+                            </div>
                         </nb-alert>
                     </div>
                     <div *ngIf="successAlert">
                         <nb-alert class="alert-center" status="success">
-                            <p>
-                                {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
-                            </p>
+                            <div class="alertMessage">
+                                <div class="msgDiv">{{message}}</div>
+                                <div class="msgDiv closeDiv">
+                                    <a (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                                </div>
+                            </div>
                         </nb-alert>
                     </div>
                 </div>
@@ -32,25 +43,25 @@
                 <div class="form-group row">
                     <label for="engineerName" class="label col-sm-3 col-form-label">Engineer name<sup>*</sup></label>
                     <div class="col-sm-6">
-                        <nb-select fullWidth id="engineerName" name="engineerName" #engineerName=ngModel [ngModel]="allocationDetail.Engineer.EngineerID" (ngModelChange)="onEngineerChange($event)">
-                            <nb-option *ngFor="let engineer of engineerList" [value]="engineer.EngineerID">{{engineer.EngineerName}}</nb-option>
-                        </nb-select>
+                        <select class="form-control-sm" id="engineerName" name="engineerName" #engineerName=ngModel [ngModel]="allocationDetail.Engineer.EngineerID" (ngModelChange)="onEngineerChange($event)">
+                            <option *ngFor="let engineer of engineerList" [value]="engineer.EngineerID">{{engineer.EngineerName}}</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="itemName" class="label col-sm-3 col-form-label">Item name<sup>*</sup></label>
+                    <label for="itemName" class="label col-sm-3 col-form-label">Item name</label>
                     <div class="col-sm-6">
-                        <nb-select fullWidth id="itemName" name="itemName" #itemName=ngModel [ngModel]="allocationDetail.Item.ItemID" (ngModelChange)="onItemChange($event)">
-                            <nb-option *ngFor="let item of itemList" [value]="item.ItemID">{{item.ItemName}}</nb-option>
-                        </nb-select>
+                        <select class="form-control-sm" id="itemName" name="itemName" #itemName=ngModel [ngModel]="allocationDetail.Item.ItemID" (ngModelChange)="onItemChange($event)">
+                            <option *ngFor="let item of itemList" [value]="item.ItemID">{{item.ItemName}}</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="cityName" class="label col-sm-3 col-form-label">City<sup>*</sup></label>
+                    <label for="cityName" class="label col-sm-3 col-form-label">City</label>
                     <div class="col-sm-6">
-                        <nb-select fullWidth id="cityName" name="cityName" #cityName=ngModel [ngModel]="allocationDetail.City.CityID" (ngModelChange)="onCityChange($event)">
-                            <nb-option *ngFor="let city of cityList" [value]="city.CityID">{{city.CityName}}</nb-option>
-                        </nb-select>
+                        <select class="form-control-sm" id="cityName" name="cityName" #cityName=ngModel [ngModel]="allocationDetail.City.CityID" (ngModelChange)="onCityChange($event)">
+                            <option *ngFor="let city of cityList" [value]="city.CityID">{{city.CityName}}</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -68,9 +79,9 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="date" class="label col-sm-3 col-form-label">Date<sup>*</sup></label>
+                    <label for="date" class="label col-sm-3 col-form-label">Date</label>
                     <div class="col-sm-6">
-                        <input type="date" id="date" nbInput fullWidth class="form-control-sm" name="date" max={{todayDate}} #date=ngModel [ngModel]="allocationDetail.AllocationDate | date: 'yyyy-MM-dd'" (ngModelChange)="allocationDetail.AllocationDate=$event" required>
+                        <input type="date" id="date" nbInput fullWidth name="date" max={{todayDate}} #date=ngModel [ngModel]="allocationDetail.AllocationDate | date: 'yyyy-MM-dd'" (ngModelChange)="allocationDetail.AllocationDate=$event" required>
                         <div *ngIf="date.invalid && (date.dirty || date.touched)" class="validate">
                             <div *ngIf="date.errors.required">
                                 Date is required.
@@ -83,7 +94,12 @@
                 </div>
                 
                 <div class="form-group row offset-sm-3">
-                    <button type="submit" nbButton status="primary" (click)="allocateItem()" [disabled]="allocateform.invalid">Allocate</button>
+                    <div *ngIf="isAddPage">
+                        <button type="submit" nbButton status="primary" (click)="allocateItem()" [disabled]="allocateform.invalid || loading">Allocate</button>
+                    </div>
+                    <div *ngIf="!isAddPage">
+                        <button type="submit" nbButton status="primary" (click)="allocateItem()" [disabled]="allocateform.invalid || loading">Update</button>
+                    </div>
                 </div>
             </form>
         </nb-card-body>

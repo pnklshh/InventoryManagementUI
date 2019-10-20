@@ -5,22 +5,32 @@
 	<meta charset="utf-8" />
 </head>
 <h2>View Stock</h2>
-<body>
+<body [class.makeblur]='loading'>
     <div class="alertWrapper">
-        <div *ngIf="errorAlert" class="alert alert-danger">
-            <p>
-                {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
-            </p>
+        <div *ngIf="errorAlert">
+            <nb-alert class="alert-center" status="danger">
+                <div class="alertMessage">
+                    <div class="msgDiv">{{message}}</div>
+                    <div class="msgDiv closeDiv">
+                        <a (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                    </div>
+                </div>
+            </nb-alert>
         </div>
-        <div *ngIf="successAlert" class="alert alert-success">
-            <p>
-                {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
-            </p>
+        <div *ngIf="successAlert">
+            <nb-alert class="alert-center" status="success">
+                <div class="alertMessage">
+                    <div class="msgDiv">{{message}}</div>
+                    <div class="msgDiv closeDiv">
+                        <a (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                    </div>
+                </div>
+            </nb-alert>
         </div>
     </div>
     
     <div class="datatableWrapper">
-        <table id="datatable" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped table-bordered">
+        <table id="datatable" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped table-bordered nowrap">
             <thead >
                 <tr>
                     <th>Item name</th>
@@ -45,16 +55,16 @@
                     <td>{{stock.Date | date:'dd-MM-yyyy'}}</td>
                     <td>{{stock.City.CityName}}</td>
                     <td>
-                        <a (click)="editStock(stock)">
+                        <a (click)="editStock(stock)" [class.disabled]="role == 'engineer'">
                             <!-- <i class="fas fa-edit" title="Update"></i> -->
-                            <nb-icon icon="edit" title="Update"></nb-icon>
+                            <nb-icon icon="edit-outline" title="Update"></nb-icon>
                         </a>
-                        <a (click)="deleteStock(stock.StockID, stock.Item.ItemName)">
+                        <a (click)="deleteStock(stock.StockID, stock.Item.ItemName)" [class.disabled]="role == 'engineer'">
                             <!-- <i class="fas fa-trash-alt" title="Delete"></i> -->
-                            <nb-icon icon="trash-2" title="Delete"></nb-icon>
+                            <nb-icon icon="trash-2-outline" title="Delete"></nb-icon>
                         </a>
-                        <a *ngIf="stock.ChallanNumber == 'RTN'" (click)="sendForRepair(stock)">
-                            <nb-icon icon="settings-2" title="Send for repair"></nb-icon>
+                        <a *ngIf="stock.ChallanNumber == defectiveChallanNumber" (click)="sendForRepair(stock)" [class.disabled]="role == 'engineer'">
+                            <nb-icon icon="settings-2-outline" title="Send for repair"></nb-icon>
                         </a>
                     </td>
                 </tr>

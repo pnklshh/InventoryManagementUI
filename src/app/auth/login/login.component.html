@@ -1,0 +1,57 @@
+<nb-layout>
+    <nb-layout-column>
+        <body [class.makeblur]='loading'>
+            <div class="cardContainer">
+                <nb-card>
+                    <nb-card-header class="card-header">Inventory Management</nb-card-header>
+                    <nb-card-body>
+                        <form #loginform=ngForm>
+                            <div class="form-group row">
+                                <div class="col-sm-3"></div>
+                                <div class="col-sm-6">
+                                    <input type="email" id="emailId" nbInput fullWidth placeholder="Email ID" name="emailId" #emailId=ngModel [(ngModel)]="engineer.EmailID" required>
+                                    <div *ngIf="emailId.invalid && (emailId.dirty || emailId.touched)" class="validate">
+                                        <div *ngIf="emailId.errors?.required">
+                                            Email ID is required.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-3"></div>
+                                <div class="col-sm-6">
+                                    <input type="password" id="password" nbInput fullWidth placeholder="Password" name="password" #password=ngModel [(ngModel)]="engineer.Password" required>
+                                    <div *ngIf="password.invalid && (password.dirty || password.touched)" class="validate">
+                                        <div *ngIf="password.errors?.required">
+                                            Password is required.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group row offset-sm-5">
+                                <div class="col-sm-2">
+                                    <button type="submit" nbButton status="primary" (click)="login()"
+                                        [disabled]="loginform.invalid || loading">Login</button>
+                                </div>
+                                <div class="col-sm-2"></div>
+                                <div  class="col-sm-3">
+                                    <a *ngIf="engineer.EmailID != ''" href="{{hostUrl}}#/auth/sendemail/{{engineer.EmailID}}">Forgot Password?</a>
+                                    <a *ngIf="engineer.EmailID == ''" href="{{hostUrl}}#/auth/sendemail">Forgot Password?</a>
+                                    <!-- <a (click)="navigateToSendEmail()">Forgot Password?</a> -->
+                                </div>
+                            </div>
+
+                            <div *ngIf="errorAlert" class="validate-login errMsg">
+                                {{message}}
+                            </div>
+                            <div *ngIf="successAlert" class="validate-login succMsg">
+                                {{message}}
+                            </div>
+                        </form>
+                    </nb-card-body>
+                </nb-card>
+            </div>
+        </body>
+    </nb-layout-column>
+</nb-layout>

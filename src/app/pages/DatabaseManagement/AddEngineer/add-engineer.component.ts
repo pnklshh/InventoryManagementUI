@@ -3,8 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { Stock } from '../../../models/Stock';
 import { ApiServiceCall } from '../../../service/api-call.service'; 
 import { DatePipe, formatDate } from '../../../../../node_modules/@angular/common';
-import { ActivatedRoute } from '../../../../../node_modules/@angular/router';
+import { ActivatedRoute, Router } from '../../../../../node_modules/@angular/router';
 import { Engineer } from '../../../models/Engineer';
+import { DatasharingService } from '../../../service/datasharing-service';
+import { Constant } from '../../../constants/Constants';
 
 @Component({
     selector: 'add-engineer',
@@ -17,23 +19,37 @@ export class AddEngineerComponent implements OnInit {
     public errorAlert:boolean=false;
     public successAlert:boolean=false;
     public message:string="";
+    public loading:boolean=false;
     
     public engineer:Engineer = new Engineer();
     public isAddPage: boolean = true;
     
     public todayDate:string=formatDate(new Date(),'yyyy-MM-dd','en-US');        //new DatePipe('en-US').transform(Date.now(),'yyyy-MM-dd');
 
-    constructor(private apiCall: ApiServiceCall, private activatedRoute: ActivatedRoute){}
+    constructor(private apiCall: ApiServiceCall, private datasharingService: DatasharingService, private router: Router, private constants: Constant, private activatedRoute: ActivatedRoute){}
 
     
     ngOnInit()
     {
-        if(this.activatedRoute.routeConfig.path != "addengineer")
+        if(this.datasharingService.getUserDetail() == null)
         {
-            this.isAddPage = false;
-            this.activatedRoute.params.subscribe(param => {
-                this.engineer = JSON.parse(param["engineer"]);
-            });
+            this.datasharingService.showLoader();
+            this.loading = true;
+            this.router.navigate(['/auth/login']);
+        }
+        else
+        {           
+            if(this.activatedRoute.routeConfig.path != "addengineer")
+            {
+                this.isAddPage = false;
+                this.activatedRoute.params.subscribe(param => {
+                    this.engineer = JSON.parse(param["engineer"]);
+                });
+            }
+            if(this.engineer.Role == null)
+                this.engineer.Role = "engineer";
+            if(this.engineer.Password == null)    
+                this.engineer.Password = btoa(this.constants.DefaultPassword);
         }
     }
 
@@ -43,12 +59,13 @@ export class AddEngineerComponent implements OnInit {
         this.errorAlert = false;
         this.successAlert = false;
         
-        console.log(JSON.stringify(this.engineer));
         if(this.isAddPage)
             url = "api/Engineer/AddEngineer";
         else
             url = "api/Engineer/UpdateEngineer";    
 
+        this.datasharingService.showLoader();
+        this.loading = true;    
         try
         {
             this.apiCall.PostData(url,JSON.stringify(this.engineer)).subscribe(data=>
@@ -66,17 +83,17 @@ export class AddEngineerComponent implements OnInit {
                     else
                         this.displayMessage("Success","Successfully updated engineer");
                 }
+                this.datasharingService.hideLoader();
+                this.loading = false;
             },
             err=>
             {
                 console.log(err);
-                console.log("err");
             });
         }
         catch(ex)
         {
             console.log(ex);
-            console.log("catch");
         }
         
     }

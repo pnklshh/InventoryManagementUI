@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core'; 
-
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core'; 
+import { NgForm } from '@angular/forms';
 import { Stock } from '../../../models/Stock';
 import { ApiServiceCall } from '../../../service/api-call.service';
 import { DatasharingService } from '../../../service/datasharing-service'; 
 import {Item} from '../../../models/Item';
 import { DatePipe, formatDate } from '../../../../../node_modules/@angular/common';
-import { ActivatedRoute } from '../../../../../node_modules/@angular/router';
+import { ActivatedRoute, Router } from '../../../../../node_modules/@angular/router';
 import { City } from '../../../models/City';
 import { AllocationDetail } from '../../../models/AllocationDetail';
 
@@ -17,16 +17,15 @@ import { AllocationDetail } from '../../../models/AllocationDetail';
 
 export class AddStockComponent implements OnInit {
 
+    @ViewChild('addstockform', {static: true}) form: NgForm;
+
     public errorAlert:boolean=false;
     public successAlert:boolean=false;
     public message:string="";
+    public loading:boolean=true;
 
-    public showLoader:boolean = true;
-
-    public stock: Stock = new Stock();
+    public stock: Stock;
     public allocation: AllocationDetail = new AllocationDetail();
-    public item:Item = new Item();
-    public city:City = new City();
     public stockList: Stock[]=[];
     public itemList: Item[]=[];
     public cityList: City[]=[];
@@ -39,52 +38,55 @@ export class AddStockComponent implements OnInit {
     public todayDate:string=formatDate(new Date(),'yyyy-MM-dd','en-US');        //new DatePipe('en-US').transform(Date.now(),'yyyy-MM-dd');
     public stockDate:string=formatDate(new Date(),'yyyy-MM-dd','en-US');
 
-    constructor(private apiCall: ApiServiceCall, private datasharingService: DatasharingService, private activatedRoute: ActivatedRoute){}
-
+    constructor(private apiCall: ApiServiceCall, private datasharingService: DatasharingService, private router: Router, private activatedRoute: ActivatedRoute){}
     
     ngOnInit()
     {
-        this.stock.Date=new Date(Date.now());
-        this.stock.Item=this.item;
-        this.stock.City=this.city;
-        this.stock.Defective=0;
-        this.stock.Dead=0;
-        
-        if(this.activatedRoute.routeConfig.path != "addstock")
+        this.datasharingService.showLoader();
+        this.initializeForm();
+        if(this.datasharingService.getUserDetail() == null)
         {
-            this.isAddPage = false;
-            if(this.activatedRoute.routeConfig.path.includes("editstock"))
-                this.isEditPage = true;
-            else if(this.activatedRoute.routeConfig.path.includes("reportdefect"))    
-                this.isReportDefectPage = true;
-            else if(this.activatedRoute.routeConfig.path.includes("fixdefect"))   
-                this.isFixDefectPage = true;
+            this.router.navigate(['/auth/login']);
+        }
+        else
+        {
+            this.getItems();
+            this.getCities();    
+            if(this.activatedRoute.routeConfig.path != "addstock")
+            {
+                this.isAddPage = false;
+                if(this.activatedRoute.routeConfig.path.includes("editstock"))
+                    this.isEditPage = true;
+                else if(this.activatedRoute.routeConfig.path.includes("reportdefect"))    
+                    this.isReportDefectPage = true;
+                else if(this.activatedRoute.routeConfig.path.includes("fixdefect"))   
+                    this.isFixDefectPage = true;
 
-            if(this.isFixDefectPage)
-            {
-                this.activatedRoute.params.subscribe(param => {
-                    this.allocation = JSON.parse(param["allocation"]);
-                    this.maxFixedQuantity = this.allocation.QuantityAllocated;
-                    this.stock.Quantity = this.maxFixedQuantity;    
-                });
-            }    
-            else
-            {
-                this.activatedRoute.params.subscribe(param => {
-                    this.stock = JSON.parse(param["stock"]);
-                    this.maxFixedQuantity = JSON.parse(param["stock"]).Quantity;    
-                });
+                if(this.isFixDefectPage)
+                {
+                    this.activatedRoute.params.subscribe(param => {
+                        this.allocation = JSON.parse(param["allocation"]);
+                        this.maxFixedQuantity = this.allocation.QuantityAllocated;
+                        this.stock.Quantity = this.maxFixedQuantity;    
+                    });
+                }    
+                else
+                {
+                    this.activatedRoute.params.subscribe(param => {
+                        this.stock = JSON.parse(param["stock"]);
+                        this.maxFixedQuantity = JSON.parse(param["stock"]).Quantity;    
+                    });
+                }
             }
         }
-        this.getItems();
-        this.getCities();
+        
     }
 
     getItems()
     {
         let url = "api/Item/GetAllItems";
         this.datasharingService.showLoader();
-
+        this.loading = true;
         try
         {
             this.apiCall.GetData(url).subscribe(data=>
@@ -103,17 +105,20 @@ export class AddStockComponent implements OnInit {
                         this.stock.Item=this.itemList[0];
                 }
                 this.datasharingService.hideLoader();
+                this.loading = false;
             },
             err=>
             {
                 console.log(err);
-                this.datasharingService.hideLoader();
+                // this.datasharingService.hideLoader();
+                // this.loading = false;
             });
         }
         catch(ex)
         {
             console.log(ex);
-            this.showLoader = false;
+            // this.datasharingService.hideLoader();
+            // this.loading = false;
         }
     }
 
@@ -121,6 +126,7 @@ export class AddStockComponent implements OnInit {
     {
         let url = "api/City/GetAllCities";
         this.datasharingService.showLoader();
+        this.loading = true;
         try
         {
             this.apiCall.GetData(url).subscribe(data=>
@@ -139,17 +145,20 @@ export class AddStockComponent implements OnInit {
                         this.stock.City=this.cityList[0];
                 }
                 this.datasharingService.hideLoader();
+                this.loading = false;
             },
             err=>
             {
                 console.log(err);
-                this.datasharingService.hideLoader();
+                // this.datasharingService.hideLoader();
+                // this.loading = false;
             });
         }
         catch(ex)
         {
             console.log(ex);
-            this.datasharingService.hideLoader();
+            // this.datasharingService.hideLoader();
+            // this.loading = false;
         }
     }
 
@@ -198,7 +207,8 @@ export class AddStockComponent implements OnInit {
             else
                 postData = this.stock;    
             
-            this.datasharingService.showLoader();    
+            this.datasharingService.showLoader();
+            this.loading = true;    
             try
             {    
                 this.apiCall.PostData(url,JSON.stringify(postData)).subscribe(data=>
@@ -220,19 +230,35 @@ export class AddStockComponent implements OnInit {
                             this.displayMessage("Success","Repaired stock received successfully");            
                     }
                     this.datasharingService.hideLoader();
+                    this.loading = false;
                 },
                 err=>
                 {
                     console.log(err);
-                    this.datasharingService.hideLoader();
+                    // this.datasharingService.hideLoader();
+                    // this.loading = false;
                 });   
             }
             catch(ex)
             {
                 console.log(ex);
-                this.datasharingService.hideLoader();
+                // this.datasharingService.hideLoader();
+                // this.loading = false;
             }
         }
+        this.initializeForm();
+        this.getItems();
+        this.getCities();
+    }
+
+    initializeForm()
+    {
+        this.stock = new Stock();
+        this.stock.Item = new Item();
+        this.stock.City = new City();
+        this.stock.Date=new Date(Date.now());
+        this.stock.Defective=0;
+        this.stock.Dead=0;
     }
 
     displayMessage(alert: string, message:string)

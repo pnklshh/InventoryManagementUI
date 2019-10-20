@@ -13,8 +13,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { ThemeModule } from './@theme/theme.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ChartsModule } from 'ng2-charts';
+import { FormsModule } from '@angular/forms';
+import {HttpModule} from '@angular/http';
 import {
-  NbChatModule,
+  //NbChatModule,
   NbDatepickerModule,
   NbDialogModule,
   NbMenuModule,
@@ -26,6 +28,7 @@ import {
 import { AppComponent } from './app.component';
 import {NgbModalContent} from './service/modal/modal.component';
 import { DatasharingService } from './service/datasharing-service';
+import { ApiServiceCall } from './service/api-call.service';
 
 @NgModule({
   declarations: [AppComponent, NgbModalContent],
@@ -34,6 +37,7 @@ import { DatasharingService } from './service/datasharing-service';
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    HttpModule,
     AppRoutingModule,
     ChartsModule,
     NgbModule,
@@ -44,14 +48,15 @@ import { DatasharingService } from './service/datasharing-service';
     NbDialogModule.forRoot(),
     NbWindowModule.forRoot(),
     NbToastrModule.forRoot(),
-    NbChatModule.forRoot({
-      messageGoogleMapKey: 'AIzaSyA_wNuCzia92MAmdLRzmqitRGvCF7wCZPY',
-    }),
+    // NbChatModule.forRoot({
+    //   messageGoogleMapKey: 'AIzaSyA_wNuCzia92MAmdLRzmqitRGvCF7wCZPY',
+    // }),
     CoreModule.forRoot(),
   ],
   bootstrap: [AppComponent],
   providers: [
     { provide: APP_BASE_HREF, useValue: '/' },
+    ApiServiceCall,
     DatasharingService
   ],
 })

@@ -13,32 +13,44 @@ import { DatasharingService } from '../../../service/datasharing-service';
 
 export class ViewAllocationComponent implements OnInit {
 
-    public columnDefs:DataTables.Settings={};
-    public dtOptions:any={};
-    public dtTrigger:Subject<any>=new Subject();
+    public columnDefs: DataTables.Settings = {};
+    public dtOptions: any = {};
+    public dtTrigger: Subject<any> = new Subject();
 
-    public errorAlert:boolean=false;
-    public successAlert:boolean=false;
-    public message:string="";
+    public errorAlert: boolean = false;
+    public successAlert: boolean = false;
+    public message: string = "";
+    public loading: boolean = true;
 
-    public allocationList:AllocationDetail[]=[];
+    public allocationList: AllocationDetail[] = [];
+    public role: string;
 
     constructor(private apiCall: ApiServiceCall, private datasharingService: DatasharingService, private chRef: ChangeDetectorRef, private router: Router){}
 
     ngOnInit()
     {
-        this.showAllocations();
+        this.datasharingService.showLoader();
+        if(this.datasharingService.getUserDetail() == null)
+        {
+            this.router.navigate(['/auth/login']);
+        }
+        else
+        {
+            this.role = this.datasharingService.getUserDetail().Role;
+            this.showAllocations();
+        }
     }
 
     showAllocations()
     {
+        this.allocationList = [];
         let url = "api/Engineer/GetAllocations";
         this.datasharingService.showLoader();
+        this.loading = true;
         try
         {
             this.apiCall.GetData(url).subscribe(data=>
             {
-                console.log(JSON.parse(data));
                 data=JSON.parse(data);
                 let appData=JSON.parse(data.AppData);
                 
@@ -95,30 +107,74 @@ export class ViewAllocationComponent implements OnInit {
                 this.chRef.detectChanges();
                 this.dtTrigger.next();
                 this.datasharingService.hideLoader();
+                this.loading = false;
             },
             err=>
             {
                 console.log(err);
-                this.datasharingService.hideLoader();
+                // this.datasharingService.hideLoader();
+                // this.loading = false;
             });
         }
         catch(ex)
         {
             console.log(ex);
-            this.datasharingService.hideLoader();
+            // this.datasharingService.hideLoader();
+            // this.loading = false;
         }
+    }
+
+    editAllocation(allocation: AllocationDetail)
+    {
+        this.router.navigate(['/pages/editallocation',JSON.stringify(allocation)]);
+    }
+
+    deleteAllocation(allocationId: number)
+    {
+        //this.stockList=[];
+        
+        let url = "api/Engineer/DeleteAllocation?allocationId=" + allocationId;
+        if(window.confirm("Are you sure you want to delete this allocation ?" ))
+        {
+            this.datasharingService.showLoader();
+            this.loading = true;
+            try
+            {
+                this.apiCall.GetData(url).subscribe(data=>
+                {
+                    data=JSON.parse(data);
+                    
+                    if(data.ErrorMessage!=null && data.ErrorMessage!="")
+                    {
+                        this.displayMessage("Error",data.ErrorMessage);
+                    }
+                    else
+                    {
+                        this.displayMessage("Success","Allocation deleted successfully");
+                        this.showAllocations();
+                    }
+                    this.datasharingService.hideLoader();
+                    this.loading = false;
+                },
+                err=>
+                {
+                    console.log(err);
+                    // this.datasharingService.hideLoader();
+                    // this.loading = false;
+                });
+            }
+            catch(ex)
+            {
+                console.log(ex);
+                // this.datasharingService.hideLoader();
+                // this.loading = false;
+            }
+        }
+
     }
 
     fixDefect(allocation: AllocationDetail)
     {
-        // let stock = new Stock();
-        // stock.ChallanNumber = "";
-        // stock.City = null;
-        // stock.Date = new Date(Date.now());
-        // stock.Dead = 0;
-        // stock.Defective = 0;
-        // stock.Item = allocation.Item;
-        // stock.Quantity = allocation.QuantityAllocated;
         this.router.navigate(['/pages/fixdefect',JSON.stringify(allocation)]);
     }
 

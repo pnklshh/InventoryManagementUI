@@ -5,6 +5,7 @@ import { ApiServiceCall } from '../../../service/api-call.service';
 import {Subject} from 'rxjs';
 import { Router } from '../../../../../node_modules/@angular/router';
 import { DatasharingService } from '../../../service/datasharing-service';
+import { Constant } from '../../../constants/Constants';
 
 @Component({
     selector: 'view-stock',
@@ -21,14 +22,27 @@ export class ViewStockComponent implements OnInit {
     public errorAlert:boolean=false;
     public successAlert:boolean=false;
     public message:string="";
+    public loading:boolean=true;
 
+    public defectiveChallanNumber: string;
     public stockList:Stock[]=[];
+    public role: string;
 
-    constructor(private apiCall: ApiServiceCall, private datasharingService: DatasharingService, private chRef: ChangeDetectorRef, private router: Router){}
+    constructor(private apiCall: ApiServiceCall, private datasharingService: DatasharingService, private constant: Constant, private chRef: ChangeDetectorRef, private router: Router){}
 
     ngOnInit()
     {
-        this.getStock();
+        this.datasharingService.showLoader();
+        if(this.datasharingService.getUserDetail() == null)
+        {
+            this.router.navigate(['/auth/login']);
+        }
+        else
+        {
+            this.role = this.datasharingService.getUserDetail().Role;
+            this.defectiveChallanNumber = this.constant.Defective_ChallanNumber;
+            this.getStock();          
+        }
     }
 
     getStock()
@@ -36,6 +50,7 @@ export class ViewStockComponent implements OnInit {
         let url = "api/Stock/GetAllStocks";
         this.stockList=[];
         this.datasharingService.showLoader();
+        this.loading = true;
         try
         {
             this.apiCall.GetData(url).subscribe(data=>
@@ -58,6 +73,7 @@ export class ViewStockComponent implements OnInit {
                     paging: true,
                     stateSave: false,
                     destroy: true,
+                    scrollX: true,
                     columns: [{
                         title: 'Item name',
                         data: 'ItemName'
@@ -111,17 +127,20 @@ export class ViewStockComponent implements OnInit {
                 this.chRef.detectChanges();
                 this.dtTrigger.next();
                 this.datasharingService.hideLoader();
+                this.loading = false;
             },
             err=>
             {
                 console.log(err);
-                this.datasharingService.hideLoader();
+                // this.datasharingService.hideLoader();
+                // this.loading = false;
             });
         }
         catch(ex)
         {
             console.log(ex);
-            this.datasharingService.hideLoader();
+            // this.datasharingService.hideLoader();
+            // this.loading = false;
         }
     }
     
@@ -138,6 +157,7 @@ export class ViewStockComponent implements OnInit {
         if(window.confirm("Are you sure you want to delete this stock of " + itemName + "s ?" ))
         {
             this.datasharingService.showLoader();
+            this.loading = true;
             try
             {
                 this.apiCall.GetData(url).subscribe(data=>
@@ -154,17 +174,20 @@ export class ViewStockComponent implements OnInit {
                         this.getStock();
                     }
                     this.datasharingService.hideLoader();
+                    this.loading = false;
                 },
                 err=>
                 {
                     console.log(err);
-                    this.datasharingService.hideLoader();
+                    // this.datasharingService.hideLoader();
+                    // this.loading = false;
                 });
             }
             catch(ex)
             {
                 console.log(ex);
-                this.datasharingService.hideLoader();
+                // this.datasharingService.hideLoader();
+                // this.loading = false;
             }
         }
 
@@ -181,12 +204,12 @@ export class ViewStockComponent implements OnInit {
 
         let url = "api/Engineer/AllocateItem";
         this.datasharingService.showLoader();
+        this.loading = true;
         try
         {
             this.apiCall.PostData(url,JSON.stringify(allocation)).subscribe(data=>
             {
                 data=JSON.parse(data);
-                console.log(data);
                 if(data.ErrorMessage!=null && data.ErrorMessage!="")
                 {
                     this.displayMessage("Error",data.ErrorMessage);
@@ -197,17 +220,20 @@ export class ViewStockComponent implements OnInit {
                     this.getStock();
                 }
                 this.datasharingService.hideLoader();
+                this.loading = false;
             },
             err=>
             {
                 console.log(err);
-                this.datasharingService.hideLoader();
+                // this.datasharingService.hideLoader();
+                // this.loading = false;
             });
         }
         catch(ex)
         {
             console.log(ex);
-            this.datasharingService.hideLoader();
+            // this.datasharingService.hideLoader();
+            // this.loading = false;
         }
     }
 

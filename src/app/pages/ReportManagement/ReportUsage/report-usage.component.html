@@ -4,24 +4,35 @@
     <title></title>
 	<meta charset="utf-8" />
 </head>
-<h2>Report Usage</h2>
-<body>
+<div *ngIf="isAddPage">
+    <h2>Report Usage</h2>
+</div>
+<div *ngIf="!isAddPage">
+    <h2>Update Usage</h2>
+</div>
+<body [class.makeblur]='loading'>
     <nb-card>
         <nb-card-body>
             <form #reportusage=ngForm>
                 <div class="alertWrapper">
                     <div *ngIf="errorAlert">
                         <nb-alert class="alert-center" status="danger">
-                            <p>
-                                {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
-                            </p>
+                            <div class="alertMessage">
+                                <div class="msgDiv">{{message}}</div>
+                                <div class="msgDiv closeDiv">
+                                    <a (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                                </div>
+                            </div>
                         </nb-alert>
                     </div>
                     <div *ngIf="successAlert">
                         <nb-alert class="alert-center" status="success">
-                            <p>
-                                {{message}}<a class="close" (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
-                            </p>
+                            <div class="alertMessage">
+                                <div class="msgDiv">{{message}}</div>
+                                <div class="msgDiv closeDiv">
+                                    <a (click)="closeMessage()"><nb-icon icon="close-outline"></nb-icon></a>
+                                </div>
+                            </div>
                         </nb-alert>
                     </div>
                 </div>
@@ -30,19 +41,19 @@
                 </div>
                 
                 <div class="form-group row">
-                    <label for="engineerName" class="label col-sm-3 col-form-label">Engineer name<sup>*</sup></label>
+                    <label for="engineerName" class="label col-sm-3 col-form-label">Engineer name</label>
                     <div class="col-sm-6">
-                        <nb-select fullWidth id="engineerName" name="engineerName" #engineerName=ngModel [ngModel]="usageDetail.Engineer.EngineerID" (ngModelChange)="onEngineerChange($event)">
-                            <nb-option *ngFor="let engineer of engineerList" [value]="engineer.EngineerID">{{engineer.EngineerName}}</nb-option>
-                        </nb-select>
+                        <select class="form-control-sm" id="engineerName" name="engineerName" #engineerName=ngModel [ngModel]="usageDetail.Engineer.EngineerID" (ngModelChange)="onEngineerChange($event)">
+                            <option *ngFor="let engineer of engineerList" [value]="engineer.EngineerID">{{engineer.EngineerName}}</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="itemName" class="label col-sm-3 col-form-label">Item name<sup>*</sup></label>
+                    <label for="itemName" class="label col-sm-3 col-form-label">Item name</label>
                     <div class="col-sm-6">
-                        <nb-select fullWidth id="itemName" name="itemName" #itemName=ngModel [ngModel]="usageDetail.Item.ItemID" (ngModelChange)="onItemChange($event)">
-                            <nb-option *ngFor="let item of itemList" [value]="item.ItemID">{{item.ItemName}}</nb-option>
-                        </nb-select>
+                        <select class="form-control-sm" id="itemName" name="itemName" #itemName=ngModel [ngModel]="usageDetail.Item.ItemID" (ngModelChange)="onItemChange($event)">
+                            <option *ngFor="let item of itemList" [value]="item.ItemID">{{item.ItemName}}<option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -60,7 +71,7 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="warranty" class="label col-sm-3 col-form-label">Warranty<sup>*</sup></label>
+                    <label for="warranty" class="label col-sm-3 col-form-label">Warranty</label>
                     <div class="demo-items col-sm-6">
                         <nb-radio-group id="warranty" [(value)]="usageDetail.Warranty">
                             <nb-radio [value]="'true'">Warranted</nb-radio>
@@ -92,7 +103,7 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="itemName" class="label col-sm-3 col-form-label">Date<sup>*</sup></label>
+                    <label for="itemName" class="label col-sm-3 col-form-label">Date</label>
                     <div class="col-sm-6">
                         <input type="date" id="date" nbInput fullWidth name="date" max={{todayDate}} #date=ngModel [ngModel]="usageDetail.UsageDate | date: 'yyyy-MM-dd'" (ngModelChange)="usageDetail.UsageDate=$event" required>
                         <div *ngIf="date.invalid && (date.dirty || date.touched)" class="validate">
@@ -117,16 +128,21 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="cityName" class="label col-sm-3 col-form-label">City<sup>*</sup></label>
+                    <label for="cityName" class="label col-sm-3 col-form-label">City</label>
                     <div class="col-sm-6">
-                        <nb-select fullWidth id="cityName" name="cityName" #cityName=ngModel [ngModel]="usageDetail.City.CityID" (ngModelChange)="onCityChange($event)">
-                            <nb-option *ngFor="let city of cityList" [value]="city.CityID">{{city.CityName}}</nb-option>
-                        </nb-select>
+                        <select class="form-control-sm" id="cityName" name="cityName" #cityName=ngModel [ngModel]="usageDetail.City.CityID" (ngModelChange)="onCityChange($event)">
+                            <option *ngFor="let city of cityList" [value]="city.CityID">{{city.CityName}}</option>
+                        </select>
                     </div>
                 </div>
                 
                 <div class="form-group row offset-sm-3">
-                    <button type="submit" nbButton status="primary" (click)="reportUsage()" [disabled]="reportusage.invalid">Report</button>
+                    <div *ngIf="isAddPage">
+                        <button type="submit" nbButton status="primary" (click)="reportUsage()" [disabled]="reportusage.invalid || loading">Report</button>
+                    </div>
+                    <div *ngIf="!isAddPage">
+                        <button type="submit" nbButton status="primary" (click)="reportUsage()" [disabled]="reportusage.invalid || loading">Update</button>
+                    </div>
                 </div>
             </form>
         </nb-card-body>

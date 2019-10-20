@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { ThemeModule } from '../../@theme/theme.module';
 import { FormsModule } from '@angular/forms';
-import { NbIconModule, NbInputModule, NbRadioModule, NbSelectModule, NbCheckboxModule, NbButtonModule, NbCardModule, NbAlertModule } from '@nebular/theme';
+import { NbIconModule, NbActionsModule, NbInputModule, NbRadioModule, NbSelectModule, NbCheckboxModule, NbButtonModule, NbCardModule, NbAlertModule, NbDatepickerModule, NbUserModule } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import {ViewEngineersComponent} from './ViewEngineers/view-engineers.component';
 import {ViewItemsComponent} from './ViewItems/view-items.component';
@@ -18,13 +18,16 @@ import {DataTablesModule} from 'angular-datatables';
       FormsModule,
       NbIconModule,
       NbEvaIconsModule,
+      NbActionsModule,
       NbInputModule,
       NbRadioModule,
       NbSelectModule,
       NbCheckboxModule,
       NbButtonModule,
       NbCardModule,
-      NbAlertModule
+      NbDatepickerModule,
+      NbAlertModule,
+      NbUserModule
     ],
     declarations: [
       ViewEngineersComponent,

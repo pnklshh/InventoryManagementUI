@@ -1,3 +1,5 @@
+@import '../../service/styles';
+
 .chartContainer{
   display: block;
   height: 200px;
@@ -16,6 +18,42 @@
   margin-left: 20px;
 }
 
+.danger-body{
+  font-weight: 700;
+  color: red; 
+  text-align: center;
+}
+.warning-body{
+  font-weight: 700;
+  color: orange; 
+  text-align: center;
+}
+.success-body{
+  font-weight: 700;
+  color: green; 
+  text-align: center;
+}
+.primary-body{
+  font-weight: 700;
+  color: blue; 
+  text-align: center;
+}
+.info-body{
+  font-weight: 700;
+  color: rgb(3, 150, 218); 
+  text-align: center;
+}
+
+.loaderContainer{
+  padding-left: 400px;
+  padding-top: 70px;
+}
+
+.emptyContainer{
+  padding-left: 350px;
+  padding-top: 80px;
+}
+
 .loader {
   border: 6px solid #f3f3f3; /* Light grey */
   border-top: 6px solid #3498db; /* Blue */
@@ -28,14 +66,4 @@
 @keyframes spin {
 0% { transform: rotate(0deg); }
 100% { transform: rotate(360deg); }
-}
-
-.loaderContainer{
-  padding-left: 400px;
-  padding-top: 70px;
-}
-
-.emptyContainer{
-  padding-left: 350px;
-  padding-top: 80px;
 }

@@ -5,7 +5,7 @@
 	<meta charset="utf-8" />
 </head>
 
-<body>
+<body [class.makeblur]='loading'>
   <div class="chartContainer">
     <!-- <div *ngIf="stockSummaryLoader" class="loaderContainer">
       <div class="loader"></div>
@@ -23,42 +23,45 @@
     <div *ngIf="!stockSummaryLoader && stockchartLabels.length == 0">
       <h5><p class="emptyContainer">No Data available for Stock Summary</p></h5>
     </div>   -->
-    <div class="cardContainer">
-      <nb-card class="card" status="primary">
+    <div *ngIf="loading" class="loaderContainer">
+      <div class="loader"></div>
+    </div>
+    <div *ngIf="!loading" class="cardContainer">
+      <nb-card class="card" status="danger">
         <nb-card-header>Items in Stock</nb-card-header>
-        <nb-card-body>
+        <nb-card-body class="danger-body" (click)="redirectToViewStock()">
           {{totalItemsinStock}}
         </nb-card-body>
       </nb-card>
     </div>
-    <div class="cardContainer">
-      <nb-card class="card" status="success">
+    <div *ngIf="!loading" class="cardContainer">
+      <nb-card class="card" status="warning">
         <nb-card-header>Items Allocated</nb-card-header>
-        <nb-card-body>
+        <nb-card-body class="warning-body" (click)="redirectToViewAllocation()">
           {{totalItemsAllocated}}
         </nb-card-body>
       </nb-card>
     </div>
-    <div class="cardContainer">
-      <nb-card status="info" class="card">
+    <div *ngIf="!loading" class="cardContainer">
+      <nb-card class="card" status="success">
         <nb-card-header>Items Used</nb-card-header>
-        <nb-card-body>
+        <nb-card-body class="success-body" (click)="redirectToViewUsage()">
           {{totalItemsUsed}}
         </nb-card-body>
       </nb-card>
     </div>
-    <div class="cardContainer">
-      <nb-card class="card" status="warning">
-        <nb-card-header>Amount</nb-card-header>
-        <nb-card-body>
+    <div *ngIf="!loading" class="cardContainer">
+      <nb-card class="card" status="primary">
+        <nb-card-header>Total Amount</nb-card-header>
+        <nb-card-body class="primary-body">
           {{totalAmount}}
         </nb-card-body>
       </nb-card>
     </div>
-    <div class="cardContainer">
-      <nb-card class="card" status="danger">
+    <div *ngIf="!loading" class="cardContainer">
+      <nb-card class="card" status="info">
         <nb-card-header>Service charge</nb-card-header>
-        <nb-card-body>
+        <nb-card-body class="info-body">
           {{totalServiceCharge}}
         </nb-card-body>
       </nb-card>

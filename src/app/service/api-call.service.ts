@@ -9,6 +9,7 @@ export class ApiServiceCall {
 
     public baseUrl: string = "http://localhost:8001/";
     //public baseUrl: string = "http://localhost:62046/";
+    public UIHostUrl: string = "http://localhost:8000/";
 
     constructor(private http: Http){}
 

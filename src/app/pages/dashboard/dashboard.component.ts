@@ -5,6 +5,8 @@ import {NgbModalContent} from '../../service/modal/modal.component';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AllocationDetail } from '../../models/AllocationDetail';
 import { Usage } from '../../models/Usage';
+import { DatasharingService } from '../../service/datasharing-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'ngx-dashboard',
@@ -13,6 +15,7 @@ import { Usage } from '../../models/Usage';
 })
 export class DashboardComponent implements OnInit,OnDestroy {
 
+  public loading:boolean = true;
   public stockSummaryLoader:boolean = true;
   public allocationSummaryLoader:boolean = true;
   public usageSummaryLoader:boolean = true;
@@ -173,14 +176,21 @@ export class DashboardComponent implements OnInit,OnDestroy {
     }
   }
 
-  constructor(private apiCall: ApiServiceCall, private modalService: NgbModal) {
+  constructor(private apiCall: ApiServiceCall, private datasharingService: DatasharingService, private modalService: NgbModal, private router: Router) {
     
   }
 
   ngOnInit(){
+
+    if(this.datasharingService.getUserDetail() == null)
+    {
+      this.router.navigate(['/auth/login']);
+    }
+    
+    this.datasharingService.hideLoader();
     this.getStock();
     this.showAllocations();
-    this.viewUsage()
+    this.viewUsage()   
   }
 
   
@@ -188,6 +198,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
   {
     let url = "api/Stock/GetAllStocks";
     this.stockList=[];
+    this.loading = true;
     try
     {
       this.apiCall.GetData(url).subscribe(data=>
@@ -198,7 +209,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
         if(data.ErrorMessage!=null && data.ErrorMessage!="")
         {
           //this.displayMessage("Error",data.ErrorMessage);
-          this.stockSummaryLoader=false;
+          //this.stockSummaryLoader=false;
         }
         else
         {
@@ -244,10 +255,9 @@ export class DashboardComponent implements OnInit,OnDestroy {
           deadObj["stack"] = "1";
           this.stockchartData.push(deadObj);
 
-          this.stockSummaryLoader=false;
         }
-
-        
+        this.stockSummaryLoader = false;
+        this.loading = false;        
       },
       err=>
       {
@@ -263,7 +273,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
   showAllocations()
   {
     let url = "api/Engineer/GetAllocations";
-    
+    this.loading = true; 
     try
     {
       this.apiCall.GetData(url).subscribe(data=>
@@ -291,9 +301,10 @@ export class DashboardComponent implements OnInit,OnDestroy {
               }
               this.totalItemsAllocated = this.totalItemsAllocated + allocation.QuantityAllocated;
             })
-            this.allocationSummaryLoader = false;
+            
           }
-          
+          this.allocationSummaryLoader = false;
+          this.loading = false; 
       },
       err=>
       {
@@ -309,7 +320,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
   viewUsage()
   {
     let url = "api/Usage/GetHistory";
-    
+    this.loading = true;
     try
     {
       this.apiCall.GetData(url).subscribe(data=>
@@ -339,9 +350,10 @@ export class DashboardComponent implements OnInit,OnDestroy {
             this.totalAmount = this.totalAmount + usage.Amount;
             this.totalServiceCharge = this.totalServiceCharge + usage.ServiceCharge;
           })
-          this.usageSummaryLoader = false;
-        }
           
+        }
+        this.usageSummaryLoader = false;
+        this.loading = false;  
       },
       err=>
       {
@@ -414,6 +426,21 @@ export class DashboardComponent implements OnInit,OnDestroy {
       modalRef.componentInstance.engineerId = itemId;
       modalRef.componentInstance.usageList = list;
     }
+  }
+
+  redirectToViewStock()
+  {
+    this.router.navigate(['/pages/viewstock']);
+  }
+
+  redirectToViewAllocation()
+  {
+    this.router.navigate(['/pages/viewallocation']);
+  }
+
+  redirectToViewUsage()
+  {
+    this.router.navigate(['/pages/viewhistory']);
   }
 
   ngOnDestroy() {

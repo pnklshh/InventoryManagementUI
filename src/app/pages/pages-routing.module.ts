@@ -20,7 +20,7 @@ import { NotFoundComponent } from './miscellaneous/not-found/not-found.component
 const routes: Routes = [{
   path: '',
   component: PagesComponent,
-  children: [
+  children: [  
   {
     path: 'dashboard',
     component: DashboardComponent,
@@ -110,11 +110,19 @@ const routes: Routes = [{
     component: AllocateItemComponent,
   }, 
   {
+    path: 'editallocation/:allocation',
+    component: AllocateItemComponent,
+  },
+  {
     path: 'viewhistory',
     component: ViewUsageComponent,
   },  
   {
     path: 'reportusage',
+    component: ReportUsageComponent,
+  },
+  {
+    path: 'editusage/:usage',
     component: ReportUsageComponent,
   },
   {

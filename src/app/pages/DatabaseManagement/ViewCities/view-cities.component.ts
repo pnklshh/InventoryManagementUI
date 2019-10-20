@@ -5,6 +5,7 @@ import { ApiServiceCall } from '../../../service/api-call.service';
 import {Subject} from 'rxjs';
 import {DataTableDirective} from 'angular-datatables';
 import { ActivatedRoute, Router } from '../../../../../node_modules/@angular/router';
+import { DatasharingService } from '../../../service/datasharing-service';
 
 @Component({
     selector: 'view-cities',
@@ -23,25 +24,37 @@ export class ViewCitiesComponent implements OnInit {
     public errorAlert:boolean=false;
     public successAlert:boolean=false;
     public message:string="";
+    public loading:boolean=true;
 
     public cityList:City[]=[];
+    public role: string;
 
-    constructor(private apiCall: ApiServiceCall, private chRef: ChangeDetectorRef, private router: Router){}
+    constructor(private apiCall: ApiServiceCall, private datasharingService: DatasharingService, private chRef: ChangeDetectorRef, private router: Router){}
 
     ngOnInit()
     {
-        this.getCities();
+        this.datasharingService.showLoader();
+        if(this.datasharingService.getUserDetail() == null)
+        {
+            this.router.navigate(['/auth/login']);
+        }
+        else
+        {
+            this.role = this.datasharingService.getUserDetail().Role;
+            this.getCities();
+        }
     }
 
     getCities()
     {
         let url = "api/City/GetAllCities";
         this.cityList=[];
+        this.datasharingService.showLoader();
+        this.loading = true;
         try
         {
             this.apiCall.GetData(url).subscribe(data=>
             {
-                console.log(JSON.parse(data));
                 data=JSON.parse(data);
                 let appData=JSON.parse(data.AppData);
                 
@@ -85,15 +98,21 @@ export class ViewCitiesComponent implements OnInit {
                 //this.rerender();                
                 this.chRef.detectChanges();
                 this.dtTrigger.next();
+                this.datasharingService.hideLoader();
+                this.loading = false;
             },
             err=>
             {
                 console.log(err);
+                // this.datasharingService.hideLoader();
+                // this.loading = false;
             });
         }
         catch(ex)
         {
             console.log(ex);
+            // this.datasharingService.hideLoader();
+            // this.loading = false;
         }
     }
     
@@ -109,6 +128,8 @@ export class ViewCitiesComponent implements OnInit {
         let url = "api/City/DeleteCity?cityId=" + cityId;
         if(window.confirm("Are you sure you want to delete this city ?" ))
         {
+            this.datasharingService.showLoader();
+            this.loading = true;
             try
             {
                 this.apiCall.GetData(url).subscribe(data=>
@@ -124,15 +145,21 @@ export class ViewCitiesComponent implements OnInit {
                         this.displayMessage("Success","City deleted successfully");
                         this.getCities();
                     }
+                    this.datasharingService.hideLoader();
+                    this.loading = false;
                 },
                 err=>
                 {
                     console.log(err);
+                    // this.datasharingService.hideLoader();
+                    // this.loading = false;
                 });
             }
             catch(ex)
             {
                 console.log(ex);
+                // this.datasharingService.hideLoader();
+                // this.loading = false;
             }
         }
 
