@@ -27,6 +27,7 @@ export class ViewStockComponent implements OnInit {
     public defectiveChallanNumber: string;
     public stockList:Stock[]=[];
     public role: string;
+    public total: number[]=[];
 
     constructor(private apiCall: ApiServiceCall, private datasharingService: DatasharingService, private constant: Constant, private chRef: ChangeDetectorRef, private router: Router){}
 
@@ -66,6 +67,14 @@ export class ViewStockComponent implements OnInit {
                 {
                     this.stockList=appData;
                 }
+                
+                this.stockList.forEach(stock => {
+                    this.total[stock.Item.ItemID] = 0;
+                })
+
+                this.stockList.forEach(stock => {
+                    this.total[stock.Item.ItemID] = this.total[stock.Item.ItemID] + stock.Quantity;
+                })
 
                 this.dtOptions={
                     pagingType: 'full_numbers',
@@ -85,6 +94,9 @@ export class ViewStockComponent implements OnInit {
                     {
                         title: 'Quantity',
                         data: 'Quantity'
+                    },
+                    {
+                        title: 'Total'
                     },
                     {
                         title: 'Defective',
