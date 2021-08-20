@@ -7,9 +7,13 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class ApiServiceCall {
 
+    //Url for hosting on IIS
     public baseUrl: string = "http://localhost:8001/";
-    //public baseUrl: string = "http://localhost:62046/";
     public UIHostUrl: string = "http://localhost:8000/";
+
+    // Url for local testing
+    //public baseUrl: string = "http://localhost:62046/";
+    //public UIHostUrl: string = "http://localhost:4200/";
 
     constructor(private http: Http){}
 

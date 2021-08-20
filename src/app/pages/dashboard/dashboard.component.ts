@@ -7,11 +7,14 @@ import { AllocationDetail } from '../../models/AllocationDetail';
 import { Usage } from '../../models/Usage';
 import { DatasharingService } from '../../service/datasharing-service';
 import { Router } from '@angular/router';
+import { DatePipe } from '@angular/common';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'ngx-dashboard',
   styleUrls: ['./dashboard.component.scss'],
   templateUrl: './dashboard.component.html',
+  providers: [DatePipe]
 })
 export class DashboardComponent implements OnInit,OnDestroy {
 
@@ -33,6 +36,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
   public totalItemsinStock:number = 0;
   public totalItemsAllocated:number = 0;
   public totalItemsUsed:number = 0;
+  public startDate = this.datePipe.transform(Date.now(), 'yyyy-MM-dd');
 
   public stockchartOptions={
     layout: {
@@ -169,14 +173,16 @@ export class DashboardComponent implements OnInit,OnDestroy {
     tooltips: {
       callbacks: {
         label: function(tooltipItem, data) {
+          var arr = [];
           var count = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-          return "Used items: " + count;
+          arr.push("Used items: " + count);
+          return arr;
         }
       }
     }
   }
 
-  constructor(private apiCall: ApiServiceCall, private datasharingService: DatasharingService, private modalService: NgbModal, private router: Router) {
+  constructor(private apiCall: ApiServiceCall, private datasharingService: DatasharingService, private modalService: NgbModal, private router: Router, private datePipe: DatePipe) {
     
   }
 
@@ -241,7 +247,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
             this.totalItemsinStock = this.totalItemsinStock + stock.Quantity;
           })
           obj["data"] = assignableData;
-          obj["label"] = "Assignable";
+          obj["label"] = "Good condition";
           obj["stack"] = "1";
           this.stockchartData.push(obj);
 

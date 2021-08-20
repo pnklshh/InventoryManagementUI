@@ -6,9 +6,9 @@ export class Stock
     StockID:number;
     Item:Item;
     Quantity:number;
-    Defective:number;
-    Dead:number;
-    Date:Date;
+    Defective:number = 0;
+    Dead:number = 0;
+    Date:Date = new Date(Date.now());
     City:City;
-    ChallanNumber:string;
+    ChallanNumber:string = "0";
 }
