@@ -1,5 +1,5 @@
 export class City
 {
-    CityID:number;
-    CityName:string
+    CityID:number = 0;
+    CityName:string = "";
 }

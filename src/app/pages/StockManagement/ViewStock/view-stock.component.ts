@@ -6,6 +6,8 @@ import {Subject} from 'rxjs';
 import { Router } from '../../../../../node_modules/@angular/router';
 import { DatasharingService } from '../../../service/datasharing-service';
 import { Constant } from '../../../constants/Constants';
+import { Item } from '../../../models/Item';
+import { City } from '../../../models/City';
 
 @Component({
     selector: 'view-stock',
@@ -28,6 +30,10 @@ export class ViewStockComponent implements OnInit {
     public stockList:Stock[]=[];
     public role: string;
     public total: number[]=[];
+    public itemList: Item[]=[];
+    public cityList: City[]=[];
+    public challanList: string[]=[];
+    public stock: Stock;
 
     constructor(private apiCall: ApiServiceCall, private datasharingService: DatasharingService, private constant: Constant, private chRef: ChangeDetectorRef, private router: Router){}
 
@@ -42,13 +48,27 @@ export class ViewStockComponent implements OnInit {
         {
             this.role = this.datasharingService.getUserDetail().Role;
             this.defectiveChallanNumber = this.constant.Defective_ChallanNumber;
-            this.getStock();          
+            this.initializeForm();
+            this.getItems();
+            this.getCities(); 
+            this.getStock();         
         }
+    }
+
+    initializeForm()
+    {
+        this.stock = new Stock();
+        this.stock.Item = new Item();
+        this.stock.City = new City();
     }
 
     getStock()
     {
-        let url = "api/Stock/GetAllStocks";
+        let challanNumber = "";
+        if(this.stock.ChallanNumber != "0")
+            challanNumber = this.stock.ChallanNumber;
+        let url = "api/Stock/GetAllStocks?itemname=" + this.stock.Item.ItemName + "&cityname=" + this.stock.City.CityName + "&challannumber=" + challanNumber;
+        console.log(url);
         this.stockList=[];
         this.datasharingService.showLoader();
         this.loading = true;
@@ -70,6 +90,9 @@ export class ViewStockComponent implements OnInit {
                 
                 this.stockList.forEach(stock => {
                     this.total[stock.Item.ItemID] = 0;
+                    // populate challanList
+                    if(!this.challanList.includes(stock.ChallanNumber))
+                        this.challanList.push(stock.ChallanNumber);
                 })
 
                 this.stockList.forEach(stock => {
@@ -247,6 +270,105 @@ export class ViewStockComponent implements OnInit {
             // this.datasharingService.hideLoader();
             // this.loading = false;
         }
+    }
+
+    getItems()
+    {
+        let url = "api/Item/GetAllItems";
+        this.datasharingService.showLoader();
+        this.loading = true;
+        try
+        {
+            this.apiCall.GetData(url).subscribe(data=>
+            {
+                data=JSON.parse(data);
+                let appData=JSON.parse(data.AppData);
+                
+                if(data.ErrorMessage!=null && data.ErrorMessage!="")
+                {
+                    this.displayMessage("Error",data.ErrorMessage);
+                }
+                else
+                {
+                    this.itemList=appData;
+                    // this.stock.Item = this.itemList[0];
+                }
+                this.datasharingService.hideLoader();
+                this.loading = false;
+            },
+            err=>
+            {
+                console.log(err);
+                // this.datasharingService.hideLoader();
+                // this.loading = false;
+            });
+        }
+        catch(ex)
+        {
+            console.log(ex);
+            // this.datasharingService.hideLoader();
+            // this.loading = false;
+        }
+    }
+
+    getCities()
+    {
+        let url = "api/City/GetAllCities";
+        this.datasharingService.showLoader();
+        this.loading = true;
+        try
+        {
+            this.apiCall.GetData(url).subscribe(data=>
+            {
+                data=JSON.parse(data);
+                let appData=JSON.parse(data.AppData);
+                
+                if(data.ErrorMessage!=null && data.ErrorMessage!="")
+                {
+                    this.displayMessage("Error",data.ErrorMessage);
+                }
+                else
+                {
+                    this.cityList=appData;
+                    //this.stock.City=this.cityList[0];
+                }
+                this.datasharingService.hideLoader();
+                this.loading = false;
+            },
+            err=>
+            {
+                console.log(err);
+                // this.datasharingService.hideLoader();
+                // this.loading = false;
+            });
+        }
+        catch(ex)
+        {
+            console.log(ex);
+            // this.datasharingService.hideLoader();
+            // this.loading = false;
+        }
+    }
+
+    onItemChange(newValue) {
+        if(newValue > 0)
+            this.stock.Item=this.itemList.find(x=>x.ItemID==newValue);
+        else
+            this.stock.Item = new Item();
+        this.getStock();
+    }
+
+    onCityChange(newValue){
+        if(newValue > 0)
+            this.stock.City=this.cityList.find(x=>x.CityID==newValue);
+        else
+            this.stock.City = new City();
+        this.getStock();
+    }
+
+    onChallanChange(newValue){
+        this.stock.ChallanNumber = newValue;
+        this.getStock();
     }
 
     displayMessage(alert: string, message:string)
