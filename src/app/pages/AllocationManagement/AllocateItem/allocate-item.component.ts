@@ -242,10 +242,10 @@ export class AllocateItemComponent implements OnInit {
                 // this.loading = false;
             }
         }
-        this.initializeForm();
-        this.getEngineers();
-        this.getItems();   
-        this.getCities();
+        // this.initializeForm();
+        // this.getEngineers();
+        // this.getItems();   
+        // this.getCities();
     }
 
     onEngineerChange(newValue) {
