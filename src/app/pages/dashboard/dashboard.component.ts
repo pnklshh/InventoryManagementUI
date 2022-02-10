@@ -202,7 +202,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
   
   getStock()
   {
-    let url = "api/Stock/GetAllStocks";
+    let url = "api/Stock/GetAllStocks?itemname=&cityname=&challannumber=";
     this.stockList=[];
     this.loading = true;
     try
